@@ -12,6 +12,7 @@ typedef struct fs_close_s fs_close_t;
 typedef struct fs_read_s fs_read_t;
 typedef struct fs_write_s fs_write_t;
 typedef struct fs_stat_s fs_stat_t;
+typedef struct fs_truncate_s fs_truncate_t;
 typedef struct fs_unlink_s fs_unlink_t;
 typedef struct fs_lock_s fs_lock_t;
 typedef struct fs_trim_s fs_trim_t;
@@ -23,6 +24,7 @@ typedef void (*fs_close_cb)(fs_close_t *req, int status);
 typedef void (*fs_read_cb)(fs_read_t *req, int status, ssize_t len);
 typedef void (*fs_write_cb)(fs_write_t *req, int status, ssize_t len);
 typedef void (*fs_stat_cb)(fs_stat_t *req, int status, const uv_stat_t *stat);
+typedef void (*fs_truncate_cb)(fs_truncate_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
 typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
 typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
@@ -75,6 +77,15 @@ struct fs_stat_s {
   uv_file file;
 
   fs_stat_cb cb;
+
+  void *data;
+};
+
+struct fs_truncate_s {
+  uv_fs_t req;
+  uv_file file;
+
+  fs_truncate_cb cb;
 
   void *data;
 };
@@ -155,6 +166,9 @@ fs_write (uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[],
 
 int
 fs_stat (uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb);
+
+int
+fs_truncate (uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb);
 
 int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
