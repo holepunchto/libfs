@@ -171,37 +171,37 @@ int
 fs_truncate (uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb);
 
 int
-fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
-
-int
-fs_try_lock (uv_file file, int64_t offset, size_t length, fs_lock_type_t type);
-
-int
-fs_wait_for_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_type_t type, fs_lock_cb cb);
-
-int
-fs_try_downgrade_lock (uv_file file, int64_t offset, size_t length);
-
-int
-fs_wait_for_downgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
-
-int
-fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
-
-int
-fs_wait_for_upgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
-
-int
-fs_unlock (uv_file file, int64_t offset, size_t length);
-
-int
 fs_trim (uv_loop_t *loop, fs_trim_t *req, uv_file file, int64_t offset, size_t length, fs_trim_cb cb);
 
 int
 fs_sparse (uv_loop_t *loop, fs_sparse_t *req, uv_file file, fs_sparse_cb cb);
 
 int
+fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
+
+int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+
+int
+fs_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_type_t type, fs_lock_cb cb);
+
+int
+fs_try_lock (uv_file file, int64_t offset, size_t length, fs_lock_type_t type);
+
+int
+fs_downgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
+
+int
+fs_try_downgrade_lock (uv_file file, int64_t offset, size_t length);
+
+int
+fs_upgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
+
+int
+fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
+
+int
+fs_unlock (uv_file file, int64_t offset, size_t length);
 
 #ifdef __cplusplus
 }
