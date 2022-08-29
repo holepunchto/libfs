@@ -5,6 +5,9 @@
 extern "C" {
 #endif
 
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
 #include <uv.h>
 
 typedef struct fs_open_s fs_open_t;
@@ -30,11 +33,6 @@ typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
 typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
 typedef void (*fs_sparse_cb)(fs_sparse_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
-
-typedef enum {
-  FS_RDLOCK = 1,
-  FS_WRLOCK,
-} fs_lock_type_t;
 
 struct fs_open_s {
   uv_fs_t req;
@@ -105,7 +103,7 @@ struct fs_lock_s {
 
   int64_t offset;
   uint64_t length;
-  fs_lock_type_t type;
+  bool shared;
 
   fs_lock_cb cb;
 
@@ -183,10 +181,10 @@ int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
 
 int
-fs_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_type_t type, fs_lock_cb cb);
+fs_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, bool shared, fs_lock_cb cb);
 
 int
-fs_try_lock (uv_file file, int64_t offset, size_t length, fs_lock_type_t type);
+fs_try_lock (uv_file file, int64_t offset, size_t length, bool shared);
 
 int
 fs_downgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
