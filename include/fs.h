@@ -76,6 +76,7 @@ struct fs_read_batch_s {
   const uv_buf_t *bufs;
   const int64_t *offsets;
 
+  size_t batched;
   size_t remaining;
   size_t len;
 
@@ -100,6 +101,7 @@ struct fs_write_batch_s {
   const uv_buf_t *bufs;
   const int64_t *offsets;
 
+  size_t batched;
   size_t remaining;
   size_t len;
 
