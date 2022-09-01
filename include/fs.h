@@ -16,10 +16,12 @@ typedef struct fs_read_s fs_read_t;
 typedef struct fs_write_s fs_write_t;
 typedef struct fs_stat_s fs_stat_t;
 typedef struct fs_truncate_s fs_truncate_t;
-typedef struct fs_unlink_s fs_unlink_t;
-typedef struct fs_lock_s fs_lock_t;
 typedef struct fs_trim_s fs_trim_t;
 typedef struct fs_sparse_s fs_sparse_t;
+typedef struct fs_chmod_s fs_chmod_t;
+typedef struct fs_lock_s fs_lock_t;
+typedef struct fs_mkdir_s fs_mkdir_t;
+typedef struct fs_unlink_s fs_unlink_t;
 typedef struct fs_swap_s fs_swap_t;
 
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
@@ -28,10 +30,12 @@ typedef void (*fs_read_cb)(fs_read_t *req, int status, ssize_t len);
 typedef void (*fs_write_cb)(fs_write_t *req, int status, ssize_t len);
 typedef void (*fs_stat_cb)(fs_stat_t *req, int status, const uv_stat_t *stat);
 typedef void (*fs_truncate_cb)(fs_truncate_t *req, int status);
-typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
-typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
 typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
 typedef void (*fs_sparse_cb)(fs_sparse_t *req, int status);
+typedef void (*fs_chmod_cb)(fs_chmod_t *req, int status);
+typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
+typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
+typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
 
 struct fs_open_s {
@@ -88,30 +92,6 @@ struct fs_truncate_s {
   void *data;
 };
 
-struct fs_unlink_s {
-  uv_fs_t req;
-  const char *path;
-
-  fs_unlink_cb cb;
-
-  void *data;
-};
-
-struct fs_lock_s {
-  uv_work_t req;
-  uv_file file;
-
-  int64_t offset;
-  uint64_t length;
-  bool shared;
-
-  fs_lock_cb cb;
-
-  int result;
-
-  void *data;
-};
-
 struct fs_trim_s {
   uv_work_t req;
   uv_file file;
@@ -133,6 +113,52 @@ struct fs_sparse_s {
   fs_sparse_cb cb;
 
   int result;
+
+  void *data;
+};
+
+struct fs_chmod_s {
+  uv_fs_t req;
+  uv_file file;
+
+  int mode;
+
+  fs_chmod_cb cb;
+
+  void *data;
+};
+
+struct fs_lock_s {
+  uv_work_t req;
+  uv_file file;
+
+  int64_t offset;
+  uint64_t length;
+  bool shared;
+
+  fs_lock_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_mkdir_s {
+  uv_fs_t req;
+  const char *path;
+
+  int mode;
+
+  fs_mkdir_cb cb;
+
+  void *data;
+};
+
+struct fs_unlink_s {
+  uv_fs_t req;
+  const char *path;
+
+  fs_unlink_cb cb;
 
   void *data;
 };
@@ -175,10 +201,7 @@ int
 fs_sparse (uv_loop_t *loop, fs_sparse_t *req, uv_file file, fs_sparse_cb cb);
 
 int
-fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
-
-int
-fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+fs_chmod (uv_loop_t *loop, fs_chmod_t *req, uv_file file, int mode, fs_chmod_cb cb);
 
 int
 fs_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, bool shared, fs_lock_cb cb);
@@ -200,6 +223,15 @@ fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
 
 int
 fs_unlock (uv_file file, int64_t offset, size_t length);
+
+int
+fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, fs_mkdir_cb cb);
+
+int
+fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
+
+int
+fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
 
 #ifdef __cplusplus
 }
