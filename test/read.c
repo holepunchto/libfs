@@ -46,7 +46,7 @@ main () {
 
   buf = uv_buf_init(malloc(12), 12);
 
-  fs_open(loop, &open_req, "test/fixtures/hello.txt", O_RDONLY, 0, on_open);
+  fs_open(loop, &open_req, "test/fixtures/read.txt", O_RDONLY, 0, on_open);
 
   uv_run(loop, UV_RUN_DEFAULT);
 

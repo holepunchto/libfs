@@ -69,6 +69,51 @@ fs_read (uv_loop_t *loop, fs_read_t *req, uv_file file, const uv_buf_t bufs[], s
 }
 
 static void
+on_read_batch (uv_fs_t *req) {
+  fs_read_batch_t *read_req = (fs_read_batch_t *) req->data;
+
+  read_req->remaining--;
+
+  if (req->result < 0) {
+    read_req->cb(read_req, req->result, -1);
+  } else {
+    read_req->len += req->result;
+
+    if (read_req->remaining == 0) {
+      read_req->cb(read_req, 0, read_req->len);
+    }
+  }
+
+  uv_fs_req_cleanup(req);
+
+  if (read_req->remaining) {
+    read_req->bufs++;
+    read_req->offsets++;
+
+    int err = uv_fs_read(req->loop, req, req->file, read_req->bufs, 1, read_req->offsets[0], on_read_batch);
+
+    if (err < 0) {
+      read_req->cb(read_req, err, -1);
+    }
+  }
+}
+
+int
+fs_read_batch (uv_loop_t *loop, fs_read_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_read_batch_cb cb) {
+  if (bufs_len < 1) return UV_EINVAL;
+
+  req->req.data = req;
+  req->file = file;
+  req->bufs = bufs;
+  req->offsets = offsets;
+  req->remaining = bufs_len;
+  req->len = 0;
+  req->cb = cb;
+
+  return uv_fs_read(loop, &req->req, file, bufs, 1, offsets[0], on_read_batch);
+}
+
+static void
 on_write (uv_fs_t *req) {
   fs_write_t *write_req = (fs_write_t *) req->data;
 
@@ -88,6 +133,51 @@ fs_write (uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[],
   req->cb = cb;
 
   return uv_fs_write(loop, &req->req, file, bufs, bufs_len, offset, on_write);
+}
+
+static void
+on_write_batch (uv_fs_t *req) {
+  fs_write_batch_t *write_req = (fs_write_batch_t *) req->data;
+
+  write_req->remaining--;
+
+  if (req->result < 0) {
+    write_req->cb(write_req, req->result, -1);
+  } else {
+    write_req->len += req->result;
+
+    if (write_req->remaining == 0) {
+      write_req->cb(write_req, 0, write_req->len);
+    }
+  }
+
+  uv_fs_req_cleanup(req);
+
+  if (write_req->remaining) {
+    write_req->bufs++;
+    write_req->offsets++;
+
+    int err = uv_fs_write(req->loop, req, req->file, write_req->bufs, 1, write_req->offsets[0], on_write_batch);
+
+    if (err < 0) {
+      write_req->cb(write_req, err, -1);
+    }
+  }
+}
+
+int
+fs_write_batch (uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb) {
+  if (bufs_len < 1) return UV_EINVAL;
+
+  req->req.data = req;
+  req->file = file;
+  req->bufs = bufs;
+  req->offsets = offsets;
+  req->remaining = bufs_len;
+  req->len = 0;
+  req->cb = cb;
+
+  return uv_fs_write(loop, &req->req, file, bufs, 1, offsets[0], on_write_batch);
 }
 
 static void

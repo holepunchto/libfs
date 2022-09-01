@@ -1,6 +1,7 @@
 list(APPEND tests
   open-close
   read
+  read-batch
   stat
 )
 

@@ -13,7 +13,9 @@ extern "C" {
 typedef struct fs_open_s fs_open_t;
 typedef struct fs_close_s fs_close_t;
 typedef struct fs_read_s fs_read_t;
+typedef struct fs_read_batch_s fs_read_batch_t;
 typedef struct fs_write_s fs_write_t;
+typedef struct fs_write_batch_s fs_write_batch_t;
 typedef struct fs_stat_s fs_stat_t;
 typedef struct fs_truncate_s fs_truncate_t;
 typedef struct fs_trim_s fs_trim_t;
@@ -27,7 +29,9 @@ typedef struct fs_swap_s fs_swap_t;
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
 typedef void (*fs_close_cb)(fs_close_t *req, int status);
 typedef void (*fs_read_cb)(fs_read_t *req, int status, ssize_t len);
+typedef void (*fs_read_batch_cb)(fs_read_batch_t *req, int status, ssize_t len);
 typedef void (*fs_write_cb)(fs_write_t *req, int status, ssize_t len);
+typedef void (*fs_write_batch_cb)(fs_write_batch_t *req, int status, ssize_t len);
 typedef void (*fs_stat_cb)(fs_stat_t *req, int status, const uv_stat_t *stat);
 typedef void (*fs_truncate_cb)(fs_truncate_t *req, int status);
 typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
@@ -65,11 +69,41 @@ struct fs_read_s {
   void *data;
 };
 
+struct fs_read_batch_s {
+  uv_fs_t req;
+  uv_file file;
+
+  const uv_buf_t *bufs;
+  const int64_t *offsets;
+
+  size_t remaining;
+  size_t len;
+
+  fs_read_batch_cb cb;
+
+  void *data;
+};
+
 struct fs_write_s {
   uv_fs_t req;
   uv_file file;
 
   fs_write_cb cb;
+
+  void *data;
+};
+
+struct fs_write_batch_s {
+  uv_fs_t req;
+  uv_file file;
+
+  const uv_buf_t *bufs;
+  const int64_t *offsets;
+
+  size_t remaining;
+  size_t len;
+
+  fs_write_batch_cb cb;
 
   void *data;
 };
@@ -186,7 +220,13 @@ int
 fs_read (uv_loop_t *loop, fs_read_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_read_cb cb);
 
 int
+fs_read_batch (uv_loop_t *loop, fs_read_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_read_batch_cb cb);
+
+int
 fs_write (uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_write_cb cb);
+
+int
+fs_write_batch (uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb);
 
 int
 fs_stat (uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb);

@@ -33,7 +33,7 @@ int
 main () {
   loop = uv_default_loop();
 
-  int e = fs_open(loop, &open_req, "test/fixtures/hello.txt", O_RDONLY, 0, on_open);
+  int e = fs_open(loop, &open_req, "test/fixtures/read.txt", O_RDONLY, 0, on_open);
   assert(e == 0);
 
   uv_run(loop, UV_RUN_DEFAULT);
