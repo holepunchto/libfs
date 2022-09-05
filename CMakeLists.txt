@@ -18,7 +18,17 @@ target_sources(
   INTERFACE
     include/fs.h
   PRIVATE
-    src/shared.c
+    src/chmod.c
+    src/close.c
+    src/mkdir.c
+    src/open.c
+    src/read.c
+    src/read-batch.c
+    src/stat.c
+    src/truncate.c
+    src/unlink.c
+    src/write.c
+    src/write-batch.c
 )
 
 target_include_directories(
