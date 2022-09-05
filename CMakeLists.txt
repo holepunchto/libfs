@@ -60,6 +60,7 @@ install(TARGETS fs_shared fs_static)
 
 install(FILES include/fs.h DESTINATION include)
 
-enable_testing()
-
-add_subdirectory(test)
+if(PROJECT_IS_TOP_LEVEL)
+  enable_testing()
+  add_subdirectory(test)
+endif()
