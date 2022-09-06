@@ -6,7 +6,7 @@ static size_t
 contiguous_bufs (const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[]) {
   size_t n = 1;
 
-  while (n < bufs_len && offsets[n - 1] + bufs[n - 1].len == offsets[n]) {
+  while (n < bufs_len && offsets[n - 1] + bufs[n - 1].len == (uint64_t) offsets[n]) {
     n++;
   }
 
