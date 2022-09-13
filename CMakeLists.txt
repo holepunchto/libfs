@@ -20,16 +20,44 @@ target_sources(
   PRIVATE
     src/chmod.c
     src/close.c
+    src/lock.c
     src/mkdir.c
     src/open.c
+    src/platform.h
     src/read.c
     src/read-batch.c
+    src/sparse.c
     src/stat.c
+    src/swap.c
+    src/trim.c
     src/truncate.c
+    src/try-lock.c
     src/unlink.c
+    src/unlock.c
     src/write.c
     src/write-batch.c
 )
+
+if(UNIX)
+  target_sources(
+    fs
+    PRIVATE
+      src/unix/lock.c
+      src/unix/sparse.c
+  )
+endif()
+
+if(APPLE)
+  target_sources(
+    fs
+    PRIVATE
+      src/mac/lock.c
+      src/mac/swap.c
+      src/mac/trim.c
+      src/mac/try-lock.c
+      src/mac/unlock.c
+  )
+endif()
 
 target_include_directories(
   fs
