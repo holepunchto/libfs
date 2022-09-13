@@ -59,6 +59,18 @@ if(APPLE)
   )
 endif()
 
+if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+  target_sources(
+    fs
+    PRIVATE
+      src/linux/lock.c
+      src/linux/swap.c
+      src/linux/trim.c
+      src/linux/try-lock.c
+      src/linux/unlock.c
+  )
+endif()
+
 target_include_directories(
   fs
   PUBLIC
