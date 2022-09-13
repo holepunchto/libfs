@@ -71,6 +71,19 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   )
 endif()
 
+if(WIN32)
+  target_sources(
+    fs
+    PRIVATE
+      src/win/lock.c
+      src/win/sparse.c
+      src/win/swap.c
+      src/win/trim.c
+      src/win/try-lock.c
+      src/win/unlock.c
+  )
+endif()
+
 target_include_directories(
   fs
   PUBLIC
