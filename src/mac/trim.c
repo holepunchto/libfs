@@ -36,7 +36,7 @@ fs__trim (uv_file file, int64_t offset, size_t length) {
 
   size_t aligned_offset = fs__align_up(offset, align);
 
-  if (aligned_offset != offset) {
+  if (aligned_offset != (size_t) offset) {
     size_t zero_length = fs__min(length, aligned_offset - offset);
 
     void *buf = calloc(1, zero_length);
