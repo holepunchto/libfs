@@ -1,4 +1,5 @@
 list(APPEND tests
+  mkdir-rmdir
   open-close
   read
   read-batch
