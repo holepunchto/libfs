@@ -26,6 +26,7 @@ target_sources(
     src/platform.h
     src/read.c
     src/read-batch.c
+    src/rmdir.c
     src/sparse.c
     src/stat.c
     src/swap.c

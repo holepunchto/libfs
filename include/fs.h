@@ -23,6 +23,7 @@ typedef struct fs_sparse_s fs_sparse_t;
 typedef struct fs_chmod_s fs_chmod_t;
 typedef struct fs_lock_s fs_lock_t;
 typedef struct fs_mkdir_s fs_mkdir_t;
+typedef struct fs_rmdir_s fs_rmdir_t;
 typedef struct fs_unlink_s fs_unlink_t;
 typedef struct fs_swap_s fs_swap_t;
 
@@ -39,6 +40,7 @@ typedef void (*fs_sparse_cb)(fs_sparse_t *req, int status);
 typedef void (*fs_chmod_cb)(fs_chmod_t *req, int status);
 typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
 typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
+typedef void (*fs_rmdir_cb)(fs_rmdir_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
 
@@ -190,6 +192,17 @@ struct fs_mkdir_s {
   void *data;
 };
 
+struct fs_rmdir_s {
+  uv_fs_t req;
+  const char *path;
+
+  int mode;
+
+  fs_rmdir_cb cb;
+
+  void *data;
+};
+
 struct fs_unlink_s {
   uv_fs_t req;
   const char *path;
@@ -268,6 +281,9 @@ fs_unlock (uv_file file, int64_t offset, size_t length);
 
 int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, fs_mkdir_cb cb);
+
+int
+fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, fs_rmdir_cb cb);
 
 int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
