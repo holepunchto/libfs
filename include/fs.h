@@ -184,8 +184,10 @@ struct fs_lock_s {
 struct fs_mkdir_s {
   uv_fs_t req;
   const char *path;
+  char *dir;
 
   int mode;
+  bool recursive;
 
   fs_mkdir_cb cb;
 
@@ -195,8 +197,10 @@ struct fs_mkdir_s {
 struct fs_rmdir_s {
   uv_fs_t req;
   const char *path;
+  char *dir;
 
   int mode;
+  bool recursive;
 
   fs_rmdir_cb cb;
 
@@ -280,10 +284,10 @@ int
 fs_unlock (uv_file file, int64_t offset, size_t length);
 
 int
-fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, fs_mkdir_cb cb);
+fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
 
 int
-fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, fs_rmdir_cb cb);
+fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb);
 
 int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
