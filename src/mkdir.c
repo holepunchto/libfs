@@ -93,7 +93,7 @@ on_mkdir_recursive (uv_fs_t *req) {
   case UV_ENOENT: {
     size_t n = last_path_sep(req->path);
 
-    if (n == -1) break;
+    if (n == (size_t) -1) break;
 
     if (mkdir_req->next == NULL) {
       mkdir_req->next = strdup(mkdir_req->req->path);
