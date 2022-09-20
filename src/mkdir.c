@@ -7,6 +7,13 @@
 #define S_ISDIR(m) (((m) &S_IFMT) == S_IFDIR)
 #endif
 
+typedef struct fs_mkdir_recursive_s fs_mkdir_recursive_t;
+
+struct fs_mkdir_recursive_s {
+  fs_mkdir_t *req;
+  char *next;
+};
+
 static inline size_t
 last_path_sep (const char *path) {
   size_t len = strlen(path);
@@ -29,8 +36,19 @@ last_path_sep (const char *path) {
 }
 
 static void
+on_finished (fs_mkdir_recursive_t *rec, int err) {
+  rec->req->cb(rec->req, err < 0 ? err : 0);
+
+  if (rec->next != NULL) free(rec->next);
+
+  uv_fs_req_cleanup(&rec->req->req);
+
+  free(rec);
+}
+
+static void
 on_stat (uv_fs_t *req) {
-  fs_mkdir_t *mkdir_req = (fs_mkdir_t *) req->data;
+  fs_mkdir_recursive_t *rec = (fs_mkdir_recursive_t *) req->data;
 
   int err = req->result;
 
@@ -38,11 +56,69 @@ on_stat (uv_fs_t *req) {
     err = UV_ENOTDIR;
   }
 
-  mkdir_req->cb(mkdir_req, err);
+  on_finished(rec, err);
+}
 
-  if (mkdir_req->next != NULL) free(mkdir_req->next);
+static void
+on_mkdir_recursive (uv_fs_t *req) {
+  fs_mkdir_recursive_t *mkdir_req = (fs_mkdir_recursive_t *) req->data;
 
-  uv_fs_req_cleanup(req);
+  int err = req->result;
+
+  switch (err) {
+  case UV_EACCES:
+  case UV_ENOSPC:
+  case UV_ENOTDIR:
+  case UV_EPERM:
+    break;
+
+  case 0: {
+    if (mkdir_req->next == NULL) break;
+
+    size_t len = strlen(mkdir_req->next);
+
+    if (len == strlen(mkdir_req->req->path)) break;
+
+    mkdir_req->next[len] = '/';
+
+    uv_fs_req_cleanup(req);
+
+    err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->req->mode, on_mkdir_recursive);
+
+    if (err == 0) return;
+
+    break;
+  }
+
+  case UV_ENOENT: {
+    size_t n = last_path_sep(req->path);
+
+    if (n == -1) break;
+
+    if (mkdir_req->next == NULL) {
+      mkdir_req->next = strdup(mkdir_req->req->path);
+    }
+
+    mkdir_req->next[n] = '\0';
+
+    uv_fs_req_cleanup(req);
+
+    err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->req->mode, on_mkdir_recursive);
+
+    if (err == 0) return;
+
+    break;
+  }
+
+  default:
+    uv_fs_req_cleanup(req);
+
+    err = uv_fs_stat(req->loop, req, mkdir_req->req->path, on_stat);
+
+    if (err == 0) return;
+  }
+
+  on_finished(mkdir_req, err);
 }
 
 static void
@@ -51,76 +127,27 @@ on_mkdir (uv_fs_t *req) {
 
   int err = req->result;
 
-  if (mkdir_req->recursive) {
-    switch (err) {
-    case UV_EACCES:
-    case UV_ENOSPC:
-    case UV_ENOTDIR:
-    case UV_EPERM:
-      break;
-
-    case 0: {
-      if (mkdir_req->next == NULL) break;
-
-      size_t len = strlen(mkdir_req->next);
-
-      if (len == strlen(mkdir_req->path)) break;
-
-      mkdir_req->next[len] = '/';
-
-      uv_fs_req_cleanup(req);
-
-      err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->mode, on_mkdir);
-
-      if (err == 0) return;
-
-      break;
-    }
-
-    case UV_ENOENT: {
-      size_t n = last_path_sep(req->path);
-
-      if (n == -1) break;
-
-      if (mkdir_req->next == NULL) {
-        mkdir_req->next = strdup(mkdir_req->path);
-      }
-
-      mkdir_req->next[n] = '\0';
-
-      uv_fs_req_cleanup(req);
-
-      err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->mode, on_mkdir);
-
-      if (err == 0) return;
-
-      break;
-    }
-
-    default:
-      uv_fs_req_cleanup(req);
-
-      err = uv_fs_stat(req->loop, req, mkdir_req->path, on_stat);
-
-      if (err == 0) return;
-    }
-  }
-
-  mkdir_req->cb(mkdir_req, err);
-
-  if (mkdir_req->next != NULL) free(mkdir_req->next);
+  mkdir_req->cb(mkdir_req, err < 0 ? err : 0);
 
   uv_fs_req_cleanup(req);
 }
 
 int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb) {
-  req->req.data = req;
   req->path = path;
-  req->next = NULL;
   req->mode = mode;
-  req->recursive = recursive;
   req->cb = cb;
 
-  return uv_fs_mkdir(loop, &req->req, path, mode, on_mkdir);
+  if (recursive) {
+    fs_mkdir_recursive_t *rec = malloc(sizeof(fs_mkdir_recursive_t));
+
+    rec->req = req;
+    rec->next = NULL;
+
+    req->req.data = rec;
+  } else {
+    req->req.data = req;
+  }
+
+  return uv_fs_mkdir(loop, &req->req, path, mode, recursive ? on_mkdir_recursive : on_mkdir);
 }
