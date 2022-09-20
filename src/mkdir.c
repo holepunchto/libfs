@@ -60,11 +60,11 @@ on_mkdir (uv_fs_t *req) {
       break;
 
     case 0: {
-      if (mkdir_req->next == NULL || strlen(mkdir_req->next) == strlen(mkdir_req->path)) {
-        break;
-      }
+      if (mkdir_req->next == NULL) break;
 
       size_t len = strlen(mkdir_req->next);
+
+      if (len == strlen(mkdir_req->path)) break;
 
       mkdir_req->next[len] = '/';
 
