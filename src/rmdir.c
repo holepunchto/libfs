@@ -19,7 +19,6 @@ int
 fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb) {
   req->req.data = req;
   req->path = path;
-  req->dir = NULL;
   req->recursive = recursive;
   req->cb = cb;
 

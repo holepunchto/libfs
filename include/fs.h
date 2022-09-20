@@ -184,7 +184,7 @@ struct fs_lock_s {
 struct fs_mkdir_s {
   uv_fs_t req;
   const char *path;
-  char *dir;
+  char *next;
 
   int mode;
   bool recursive;
@@ -197,7 +197,6 @@ struct fs_mkdir_s {
 struct fs_rmdir_s {
   uv_fs_t req;
   const char *path;
-  char *dir;
 
   int mode;
   bool recursive;

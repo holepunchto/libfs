@@ -1,5 +1,6 @@
 list(APPEND tests
   mkdir-rmdir
+  mkdir-rmdir-recursive
   open-close
   read
   read-batch
