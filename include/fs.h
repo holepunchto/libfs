@@ -11,6 +11,7 @@ extern "C" {
 #include <uv.h>
 
 typedef struct fs_open_s fs_open_t;
+typedef struct fs_access_s fs_access_t;
 typedef struct fs_close_s fs_close_t;
 typedef struct fs_read_s fs_read_t;
 typedef struct fs_read_batch_s fs_read_batch_t;
@@ -28,6 +29,7 @@ typedef struct fs_unlink_s fs_unlink_t;
 typedef struct fs_swap_s fs_swap_t;
 
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
+typedef void (*fs_access_cb)(fs_access_t *req, int status);
 typedef void (*fs_close_cb)(fs_close_t *req, int status);
 typedef void (*fs_read_cb)(fs_read_t *req, int status, ssize_t len);
 typedef void (*fs_read_batch_cb)(fs_read_batch_t *req, int status, ssize_t len);
@@ -49,6 +51,16 @@ struct fs_open_s {
   const char *path;
 
   fs_open_cb cb;
+
+  void *data;
+};
+
+struct fs_access_s {
+  uv_fs_t req;
+  const char *path;
+  int mode;
+
+  fs_access_cb cb;
 
   void *data;
 };
@@ -227,6 +239,9 @@ struct fs_swap_s {
 
 int
 fs_open (uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb);
+
+int
+fs_access (uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb);
 
 int
 fs_close (uv_loop_t *loop, fs_close_t *req, uv_file file, fs_close_cb cb);

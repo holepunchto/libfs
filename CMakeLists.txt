@@ -18,6 +18,7 @@ target_sources(
   INTERFACE
     include/fs.h
   PRIVATE
+    src/access.c
     src/chmod.c
     src/close.c
     src/lock.c
