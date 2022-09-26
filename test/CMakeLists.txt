@@ -10,7 +10,7 @@ list(APPEND tests
 foreach(test IN LISTS tests)
   add_executable(${test} ${test}.c)
 
-  target_link_libraries(${test} fs_static)
+  target_link_libraries(${test} fs_shared)
 
   add_test(
     NAME ${test}
