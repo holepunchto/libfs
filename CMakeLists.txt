@@ -124,7 +124,7 @@ set_target_properties(
 target_link_libraries(
   fs_static
   PUBLIC
-    uv_a
+    uv
 )
 
 install(TARGETS fs_shared fs_static)
