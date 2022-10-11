@@ -73,6 +73,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_sources(
     fs
     PRIVATE
+      src/linux/attr.c
       src/linux/lock.c
       src/linux/swap.c
       src/linux/trim.c
@@ -85,6 +86,7 @@ if(WIN32)
   target_sources(
     fs
     PRIVATE
+      src/win/attr.c
       src/win/lock.c
       src/win/sparse.c
       src/win/swap.c
