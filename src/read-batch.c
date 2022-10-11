@@ -46,7 +46,7 @@ on_read_batch (uv_fs_t *req) {
     int err = uv_fs_read(
       req->loop,
       req,
-      req->file,
+      read_req->file,
       read_req->bufs,
       read_req->batched,
       read_req->offsets[0],
