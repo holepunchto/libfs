@@ -46,7 +46,7 @@ on_write_batch (uv_fs_t *req) {
     int err = uv_fs_read(
       req->loop,
       req,
-      req->file,
+      write_req->file,
       write_req->bufs,
       write_req->batched,
       write_req->offsets[0],
