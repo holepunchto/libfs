@@ -1,4 +1,6 @@
 list(APPEND tests
+  attr-get
+  attr-list
   mkdir-rmdir
   mkdir-rmdir-recursive
   open-close

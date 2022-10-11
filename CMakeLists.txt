@@ -25,6 +25,7 @@ target_sources(
     include/fs.h
   PRIVATE
     src/access.c
+    src/attr.c
     src/chmod.c
     src/close.c
     src/lock.c
@@ -59,6 +60,7 @@ if(APPLE)
   target_sources(
     fs
     PRIVATE
+      src/mac/attr.c
       src/mac/lock.c
       src/mac/swap.c
       src/mac/trim.c

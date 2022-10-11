@@ -15,6 +15,18 @@ int
 fs__sparse (uv_file file);
 
 int
+fs__get_attr (uv_file file, const char *name, uv_buf_t *value);
+
+int
+fs__set_attr (uv_file file, const char *name, const uv_buf_t *value);
+
+int
+fs__remove_attr (uv_file file, const char *name);
+
+int
+fs__list_attrs (uv_file file, char **names, size_t *length);
+
+int
 fs__lock (uv_file file, int64_t offset, size_t length, bool shared);
 
 int

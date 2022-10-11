@@ -23,6 +23,10 @@ typedef struct fs_trim_s fs_trim_t;
 typedef struct fs_sparse_s fs_sparse_t;
 typedef struct fs_chmod_s fs_chmod_t;
 typedef struct fs_lock_s fs_lock_t;
+typedef struct fs_get_attr_s fs_get_attr_t;
+typedef struct fs_set_attr_s fs_set_attr_t;
+typedef struct fs_remove_attr_s fs_remove_attr_t;
+typedef struct fs_list_attrs_s fs_list_attrs_t;
 typedef struct fs_mkdir_s fs_mkdir_t;
 typedef struct fs_rmdir_s fs_rmdir_t;
 typedef struct fs_unlink_s fs_unlink_t;
@@ -41,6 +45,10 @@ typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
 typedef void (*fs_sparse_cb)(fs_sparse_t *req, int status);
 typedef void (*fs_chmod_cb)(fs_chmod_t *req, int status);
 typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
+typedef void (*fs_get_attr_cb)(fs_get_attr_t *req, int status, const uv_buf_t *value);
+typedef void (*fs_set_attr_cb)(fs_set_attr_t *req, int status);
+typedef void (*fs_remove_attr_cb)(fs_remove_attr_t *req, int status);
+typedef void (*fs_list_attrs_cb)(fs_list_attrs_t *req, int status, const char *attrs[], ssize_t len);
 typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
 typedef void (*fs_rmdir_cb)(fs_rmdir_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
@@ -193,6 +201,61 @@ struct fs_lock_s {
   void *data;
 };
 
+struct fs_get_attr_s {
+  uv_work_t req;
+  uv_file file;
+
+  const char *name;
+  uv_buf_t value;
+
+  fs_get_attr_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_set_attr_s {
+  uv_work_t req;
+  uv_file file;
+
+  const char *name;
+  const uv_buf_t *value;
+
+  fs_set_attr_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_remove_attr_s {
+  uv_work_t req;
+  uv_file file;
+
+  const char *name;
+
+  fs_remove_attr_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_list_attrs_s {
+  uv_work_t req;
+  uv_file file;
+
+  char *names;
+  size_t length;
+
+  fs_list_attrs_cb cb;
+
+  int result;
+
+  void *data;
+};
+
 struct fs_mkdir_s {
   uv_fs_t req;
   const char *path;
@@ -293,6 +356,18 @@ fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
 
 int
 fs_unlock (uv_file file, int64_t offset, size_t length);
+
+int
+fs_get_attr (uv_loop_t *loop, fs_get_attr_t *req, uv_file file, const char *name, fs_get_attr_cb cb);
+
+int
+fs_set_attr (uv_loop_t *loop, fs_set_attr_t *req, uv_file file, const char *name, const uv_buf_t *value, fs_set_attr_cb cb);
+
+int
+fs_remove_attr (uv_loop_t *loop, fs_remove_attr_t *req, uv_file file, const char *name, fs_remove_attr_cb cb);
+
+int
+fs_list_attrs (uv_loop_t *loop, fs_list_attrs_t *req, uv_file file, fs_list_attrs_cb cb);
 
 int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
