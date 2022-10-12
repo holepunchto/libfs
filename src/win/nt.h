@@ -1,9 +1,27 @@
 #ifndef FS_NT_H
 #define FS_NT_H
 
-#ifndef FILE_OVERWRITE_IF
-#define FILE_OVERWRITE_IF 0x00000005
-#endif
+// Definitions of needed Windows kernel APIs, mostly taken from winternl.h and
+// the Windows SDK documentation.
+//
+// Copyright (c) Microsoft Corp. All rights reserved.
+
+#include <windef.h>
+
+#define FILE_SUPERSEDE           0x00000000
+#define FILE_OPEN                0x00000001
+#define FILE_CREATE              0x00000002
+#define FILE_OPEN_IF             0x00000003
+#define FILE_OVERWRITE           0x00000004
+#define FILE_OVERWRITE_IF        0x00000005
+#define FILE_MAXIMUM_DISPOSITION 0x00000005
+
+#define FILE_SUPERSEDED     0x00000000
+#define FILE_OPENED         0x00000001
+#define FILE_CREATED        0x00000002
+#define FILE_OVERWRITTEN    0x00000003
+#define FILE_EXISTS         0x00000004
+#define FILE_DOES_NOT_EXIST 0x00000005
 
 typedef struct _UNICODE_STRING {
   USHORT Length;
@@ -117,69 +135,75 @@ typedef enum _FILE_INFORMATION_CLASS {
 } FILE_INFORMATION_CLASS,
   *PFILE_INFORMATION_CLASS;
 
-NTSYSCALLAPI NTSTATUS
+typedef VOID(NTAPI *PIO_APC_ROUTINE)(
+  IN PVOID ApcContext,
+  IN PIO_STATUS_BLOCK IoStatusBlock,
+  IN ULONG Reserved
+);
+
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtClose (
-  HANDLE Handle
+  IN HANDLE Handle
 );
 
-NTSYSCALLAPI NTSTATUS
-NtOpenFile (
-  PHANDLE FileHandle,
-  ACCESS_MASK DesiredAccess,
-  POBJECT_ATTRIBUTES ObjectAttributes,
-  PIO_STATUS_BLOCK IoStatusBlock,
-  ULONG ShareAccess,
-  ULONG OpenOptions
-);
-
-NTSYSCALLAPI NTSTATUS
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtCreateFile (
-  PHANDLE FileHandle,
-  ACCESS_MASK DesiredAccess,
-  POBJECT_ATTRIBUTES ObjectAttributes,
-  PIO_STATUS_BLOCK IoStatusBlock,
-  PLARGE_INTEGER AllocationSize,
-  ULONG FileAttributes,
-  ULONG ShareAccess,
-  ULONG CreateDisposition,
-  ULONG CreateOptions,
-  PVOID EaBuffer,
-  ULONG EaLength
+  OUT PHANDLE FileHandle,
+  IN ACCESS_MASK DesiredAccess,
+  IN POBJECT_ATTRIBUTES ObjectAttributes,
+  OUT PIO_STATUS_BLOCK IoStatusBlock,
+  IN PLARGE_INTEGER AllocationSize OPTIONAL,
+  IN ULONG FileAttributes,
+  IN ULONG ShareAccess,
+  IN ULONG CreateDisposition,
+  IN ULONG CreateOptions,
+  IN PVOID EaBuffer OPTIONAL,
+  IN ULONG EaLength
 );
 
-NTSYSCALLAPI NTSTATUS
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
+NtOpenFile (
+  OUT PHANDLE FileHandle,
+  IN ACCESS_MASK DesiredAccess,
+  IN POBJECT_ATTRIBUTES ObjectAttributes,
+  OUT PIO_STATUS_BLOCK IoStatusBlock,
+  IN ULONG ShareAccess,
+  IN ULONG OpenOptions
+);
+
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtReadFile (
-  HANDLE FileHandle,
-  HANDLE Event,
-  PVOID ApcRoutine,
-  PVOID ApcContext,
-  PIO_STATUS_BLOCK IoStatusBlock,
-  PVOID Buffer,
-  ULONG Length,
-  PLARGE_INTEGER ByteOffset,
-  PULONG Key
+  IN HANDLE FileHandle,
+  IN HANDLE Event,
+  IN PIO_APC_ROUTINE ApcRoutine,
+  IN PVOID ApcContext,
+  OUT PIO_STATUS_BLOCK IoStatusBlock,
+  OUT PVOID Buffer,
+  IN ULONG Length,
+  IN PLARGE_INTEGER ByteOffset,
+  IN PULONG Key
 );
 
-NTSYSCALLAPI NTSTATUS
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtWriteFile (
-  HANDLE FileHandle,
-  HANDLE Event,
-  PVOID ApcRoutine,
-  PVOID ApcContext,
-  PIO_STATUS_BLOCK IoStatusBlock,
-  PVOID Buffer,
-  ULONG Length,
-  PLARGE_INTEGER ByteOffset,
-  PULONG Key
+  IN HANDLE FileHandle,
+  IN HANDLE Event,
+  IN PIO_APC_ROUTINE ApcRoutine,
+  IN PVOID ApcContext,
+  OUT PIO_STATUS_BLOCK IoStatusBlock,
+  IN PVOID Buffer,
+  IN ULONG Length,
+  IN PLARGE_INTEGER ByteOffset,
+  IN PULONG Key
 );
 
-NTSYSCALLAPI NTSTATUS
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtQueryInformationFile (
-  HANDLE FileHandle,
-  PIO_STATUS_BLOCK IoStatusBlock,
-  PVOID FileInformation,
-  ULONG Length,
-  FILE_INFORMATION_CLASS FileInformationClass
+  IN HANDLE FileHandle,
+  OUT PIO_STATUS_BLOCK IoStatusBlock,
+  OUT PVOID FileInformation,
+  IN ULONG Length,
+  IN FILE_INFORMATION_CLASS FileInformationClass
 );
 
 #endif // FS_NT_H
