@@ -88,6 +88,7 @@ if(WIN32)
     PRIVATE
       src/win/attr.c
       src/win/lock.c
+      src/win/nt.h
       src/win/sparse.c
       src/win/swap.c
       src/win/trim.c
@@ -117,6 +118,14 @@ target_link_libraries(
     uv
 )
 
+if(WIN32)
+  target_link_libraries(
+    fs_shared
+    PUBLIC
+      ntdll
+  )
+endif()
+
 add_library(fs_static STATIC $<TARGET_OBJECTS:fs>)
 
 set_target_properties(
@@ -130,6 +139,14 @@ target_link_libraries(
   PUBLIC
     uv
 )
+
+if(WIN32)
+  target_link_libraries(
+    fs_static
+    PUBLIC
+      ntdll
+  )
+endif()
 
 install(TARGETS fs_shared fs_static)
 
