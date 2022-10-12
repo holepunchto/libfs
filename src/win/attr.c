@@ -42,7 +42,44 @@ fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
 
   if (res < 0) return -1;
 
+  FILE_STANDARD_INFORMATION info;
+
+  res = NtQueryInformationFile(
+    stream_handle,
+    &status,
+    &info,
+    sizeof(info),
+    FileStandardInformation
+  );
+
+  if (res < 0) {
+    NtClose(stream_handle);
+    return -1;
+  }
+
+  size_t length = info.EndOfFile.QuadPart;
+
+  *value = uv_buf_init(malloc(length), length);
+
+  LARGE_INTEGER offset = {
+    .QuadPart = 0,
+  };
+
+  res = NtReadFile(
+    stream_handle,
+    NULL,
+    NULL,
+    NULL,
+    &status,
+    value->base,
+    value->len,
+    &offset,
+    NULL
+  );
+
   NtClose(stream_handle);
+
+  if (res < 0) return -1;
 
   return 0;
 }
