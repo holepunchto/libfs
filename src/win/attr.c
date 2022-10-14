@@ -159,10 +159,10 @@ int
 fs__list_attrs (uv_file file, char **names, size_t *length) {
   HANDLE handle = uv_get_osfhandle(file);
 
-  size_t count = 16;
+  size_t info_size = 64;
 
-  PFILE_STREAM_INFORMATION info = malloc(count * sizeof(FILE_STREAM_INFORMATION));
-  memset(info, 0, count * sizeof(FILE_STREAM_INFORMATION));
+  PFILE_STREAM_INFORMATION info = malloc(info_size);
+  memset(info, 0, info_size);
 
   NTSTATUS res;
 
@@ -173,13 +173,13 @@ fs__list_attrs (uv_file file, char **names, size_t *length) {
       handle,
       &status,
       &info[0],
-      count * sizeof(FILE_STREAM_INFORMATION),
+      info_size,
       FileStreamInformation
     );
 
     if (res == STATUS_BUFFER_OVERFLOW) {
-      info = realloc(info, (count *= 2) * sizeof(FILE_STREAM_INFORMATION));
-      memset(info, 0, count * sizeof(FILE_STREAM_INFORMATION));
+      info = realloc(info, info_size *= 2);
+      memset(info, 0, info_size);
     } else {
       break;
     }
