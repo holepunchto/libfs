@@ -6,7 +6,8 @@
 //
 // Copyright (c) Microsoft Corp. All rights reserved.
 
-#include <windef.h>
+#include <windows.h>
+#include <ntstatus.h>
 
 #define FILE_SUPERSEDE           0x00000000
 #define FILE_OPEN                0x00000001
@@ -53,6 +54,14 @@ typedef struct _FILE_STANDARD_INFORMATION {
   BOOLEAN DeletePending;
   BOOLEAN Directory;
 } FILE_STANDARD_INFORMATION, *PFILE_STANDARD_INFORMATION;
+
+typedef struct _FILE_STREAM_INFORMATION {
+  ULONG NextEntryOffset;
+  ULONG StreamNameLength;
+  LARGE_INTEGER StreamSize;
+  LARGE_INTEGER StreamAllocationSize;
+  WCHAR StreamName[1];
+} FILE_STREAM_INFORMATION, *PFILE_STREAM_INFORMATION;
 
 typedef enum _FILE_INFORMATION_CLASS {
   FileDirectoryInformation = 1,

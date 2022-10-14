@@ -1,4 +1,3 @@
-#include <io.h>
 #include <uv.h>
 
 #include "../../include/fs.h"
@@ -9,8 +8,6 @@ int
 fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
   HANDLE handle = uv_get_osfhandle(file);
   HANDLE stream_handle;
-
-  IO_STATUS_BLOCK status;
 
   size_t len = strlen(name);
 
@@ -30,6 +27,8 @@ fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
     .RootDirectory = handle,
     .ObjectName = &object_name,
   };
+
+  IO_STATUS_BLOCK status;
 
   NTSTATUS res = NtOpenFile(
     &stream_handle,
@@ -89,8 +88,6 @@ fs__set_attr (uv_file file, const char *name, const uv_buf_t *value) {
   HANDLE handle = uv_get_osfhandle(file);
   HANDLE stream_handle;
 
-  IO_STATUS_BLOCK status;
-
   size_t len = strlen(name);
 
   WCHAR unicode_name[MAX_PATH] = L":";
@@ -109,6 +106,8 @@ fs__set_attr (uv_file file, const char *name, const uv_buf_t *value) {
     .RootDirectory = handle,
     .ObjectName = &object_name,
   };
+
+  IO_STATUS_BLOCK status;
 
   NTSTATUS res = NtCreateFile(
     &stream_handle,
@@ -160,5 +159,88 @@ int
 fs__list_attrs (uv_file file, char **names, size_t *length) {
   HANDLE handle = uv_get_osfhandle(file);
 
-  return UV_ENOSYS;
+  size_t count = 16;
+
+  PFILE_STREAM_INFORMATION info = malloc(count * sizeof(FILE_STREAM_INFORMATION));
+  memset(info, 0, count * sizeof(FILE_STREAM_INFORMATION));
+
+  NTSTATUS res;
+
+  do {
+    IO_STATUS_BLOCK status;
+
+    res = NtQueryInformationFile(
+      handle,
+      &status,
+      &info[0],
+      count * sizeof(FILE_STREAM_INFORMATION),
+      FileStreamInformation
+    );
+
+    if (res == STATUS_BUFFER_OVERFLOW) {
+      info = realloc(info, (count *= 2) * sizeof(FILE_STREAM_INFORMATION));
+      memset(info, 0, count * sizeof(FILE_STREAM_INFORMATION));
+    } else {
+      break;
+    }
+  } while (true);
+
+  if (res < 0) return -1;
+
+  PFILE_STREAM_INFORMATION next = info;
+
+  size_t names_len = 0;
+  *length = 0;
+
+  do {
+    PWCHAR unicode_name = &next->StreamName[1];
+
+    unicode_name[wcslen(unicode_name) - wcslen(L":$DATA")] = L'\0';
+
+    if (wcscmp(unicode_name, L"") != 0) {
+      size_t name_len = WideCharToMultiByte(CP_UTF8, 0, unicode_name, -1, NULL, 0, NULL, NULL);
+
+      *length += 1;
+
+      names_len += sizeof(char *) + name_len;
+    }
+
+    if (next->NextEntryOffset) {
+      next = (PFILE_STREAM_INFORMATION) (((uintptr_t) next) + next->NextEntryOffset);
+    } else {
+      break;
+    }
+  } while (true);
+
+  *names = malloc(names_len);
+
+  size_t offset = *length * sizeof(char *), i = 0, j = 0;
+
+  next = info;
+
+  do {
+    PWCHAR unicode_name = &next->StreamName[1];
+
+    if (wcscmp(unicode_name, L"") != 0) {
+      size_t name_len = WideCharToMultiByte(CP_UTF8, 0, unicode_name, -1, NULL, 0, NULL, NULL);
+
+      char *name = *names + offset + i;
+      i += name_len;
+
+      WideCharToMultiByte(CP_UTF8, 0, unicode_name, -1, name, name_len, NULL, NULL);
+
+      memcpy(*names + j, &name, sizeof(char *));
+      j += sizeof(char *);
+    }
+
+    if (next->NextEntryOffset) {
+      next = (PFILE_STREAM_INFORMATION) (((uintptr_t) next) + next->NextEntryOffset);
+    } else {
+      break;
+    }
+  } while (true);
+
+  free(info);
+
+  return 0;
 }
