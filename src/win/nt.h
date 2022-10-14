@@ -7,6 +7,7 @@
 // Copyright (c) Microsoft Corp. All rights reserved.
 
 #include <windows.h>
+
 #include <ntstatus.h>
 
 #define FILE_SUPERSEDE           0x00000000
