@@ -6,7 +6,7 @@
 
 static void
 on_realpath (uv_fs_t *req) {
-  fs_realpath_t *realpath_req = (fs_access_t *) req->data;
+  fs_realpath_t *realpath_req = (fs_realpath_t *) req->data;
 
   int status = req->result;
 
