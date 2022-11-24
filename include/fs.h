@@ -23,6 +23,7 @@ typedef struct fs_trim_s fs_trim_t;
 typedef struct fs_sparse_s fs_sparse_t;
 typedef struct fs_chmod_s fs_chmod_t;
 typedef struct fs_lock_s fs_lock_t;
+typedef struct fs_realpath_s fs_realpath_t;
 typedef struct fs_mkdir_s fs_mkdir_t;
 typedef struct fs_rmdir_s fs_rmdir_t;
 typedef struct fs_unlink_s fs_unlink_t;
@@ -41,6 +42,7 @@ typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
 typedef void (*fs_sparse_cb)(fs_sparse_t *req, int status);
 typedef void (*fs_chmod_cb)(fs_chmod_t *req, int status);
 typedef void (*fs_lock_cb)(fs_lock_t *req, int status);
+typedef void (*fs_realpath_cb)(fs_realpath_t *req, int status, const char *path);
 typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
 typedef void (*fs_rmdir_cb)(fs_rmdir_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
@@ -195,6 +197,14 @@ struct fs_lock_s {
   void *data;
 };
 
+struct fs_realpath_s {
+  uv_fs_t req;
+
+  fs_realpath_cb cb;
+
+  void *data;
+};
+
 struct fs_mkdir_s {
   uv_fs_t req;
   char *path;
@@ -294,6 +304,9 @@ fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
 
 int
 fs_unlock (uv_file file, int64_t offset, size_t length);
+
+int
+fs_realpath (uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
 
 int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
