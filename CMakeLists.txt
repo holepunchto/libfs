@@ -8,7 +8,9 @@ endif()
 
 project(fs C)
 
-add_subdirectory(vendor/libuv EXCLUDE_FROM_ALL)
+if(NOT TARGET uv)
+  add_subdirectory(vendor/libuv EXCLUDE_FROM_ALL)
+endif()
 
 add_library(fs OBJECT)
 
