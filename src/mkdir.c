@@ -1,3 +1,4 @@
+#include <path.h>
 #include <stdlib.h>
 #include <uv.h>
 
@@ -14,36 +15,13 @@ struct fs_mkdir_recursive_s {
   char *next;
 };
 
-static inline size_t
-last_path_sep (const char *path) {
-  size_t len = strlen(path);
-
-  while (len > 0) {
-    char c = path[len - 1];
-
-#ifdef __POSIX__
-    if (c == '/') {
-#else
-    if (c == '/' || c == '\\') {
-#endif
-      return len - 1;
-    }
-
-    len--;
-  }
-
-  return (size_t) -1;
-}
-
 static void
-on_finished (fs_mkdir_recursive_t *rec, int err) {
-  uv_fs_req_cleanup(&rec->req->req);
+on_finished (fs_mkdir_t *req, int err) {
+  uv_fs_req_cleanup(&req->req);
 
-  rec->req->cb(rec->req, err < 0 ? err : 0);
+  free(req->path);
 
-  if (rec->next != NULL) free(rec->next);
-
-  free(rec);
+  if (req->cb) req->cb(req, err < 0 ? err : 0);
 }
 
 static void
@@ -56,12 +34,16 @@ on_stat (uv_fs_t *req) {
     err = UV_ENOTDIR;
   }
 
-  on_finished(rec, err);
+  on_finished(rec->req, err);
+
+  if (rec->next != NULL) free(rec->next);
+
+  free(rec);
 }
 
 static void
 on_mkdir_recursive (uv_fs_t *req) {
-  fs_mkdir_recursive_t *mkdir_req = (fs_mkdir_recursive_t *) req->data;
+  fs_mkdir_recursive_t *rec = (fs_mkdir_recursive_t *) req->data;
 
   int err = req->result;
 
@@ -73,17 +55,17 @@ on_mkdir_recursive (uv_fs_t *req) {
     break;
 
   case 0: {
-    if (mkdir_req->next == NULL) break;
+    if (rec->next == NULL) break;
 
-    size_t len = strlen(mkdir_req->next);
+    size_t len = strlen(rec->next);
 
-    if (len == strlen(mkdir_req->req->path)) break;
+    if (len == strlen(rec->req->path)) break;
 
-    mkdir_req->next[len] = '/';
+    rec->next[len] = '/';
 
     uv_fs_req_cleanup(req);
 
-    err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->req->mode, on_mkdir_recursive);
+    err = uv_fs_mkdir(req->loop, req, rec->next, rec->req->mode, on_mkdir_recursive);
 
     if (err == 0) return;
 
@@ -91,19 +73,21 @@ on_mkdir_recursive (uv_fs_t *req) {
   }
 
   case UV_ENOENT: {
-    size_t n = last_path_sep(req->path);
+    size_t dirname = 0;
 
-    if (n == (size_t) -1) break;
+    path_dirname(req->path, &dirname, path_separator_system);
 
-    if (mkdir_req->next == NULL) {
-      mkdir_req->next = strdup(mkdir_req->req->path);
+    if (dirname == strlen(req->path)) break;
+
+    if (rec->next == NULL) {
+      rec->next = strdup(rec->req->path);
     }
 
-    mkdir_req->next[n] = '\0';
+    rec->next[dirname - 1] = '\0';
 
     uv_fs_req_cleanup(req);
 
-    err = uv_fs_mkdir(req->loop, req, mkdir_req->next, mkdir_req->req->mode, on_mkdir_recursive);
+    err = uv_fs_mkdir(req->loop, req, rec->next, rec->req->mode, on_mkdir_recursive);
 
     if (err == 0) return;
 
@@ -113,12 +97,16 @@ on_mkdir_recursive (uv_fs_t *req) {
   default:
     uv_fs_req_cleanup(req);
 
-    err = uv_fs_stat(req->loop, req, mkdir_req->req->path, on_stat);
+    err = uv_fs_stat(req->loop, req, rec->req->path, on_stat);
 
     if (err == 0) return;
   }
 
-  on_finished(mkdir_req, err);
+  on_finished(rec->req, err);
+
+  if (rec->next != NULL) free(rec->next);
+
+  free(rec);
 }
 
 static void
@@ -134,7 +122,7 @@ on_mkdir (uv_fs_t *req) {
 
 int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb) {
-  req->path = path;
+  req->path = strdup(path);
   req->mode = mode;
   req->cb = cb;
 
@@ -144,9 +132,9 @@ fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool rec
     rec->req = req;
     rec->next = NULL;
 
-    req->req.data = rec;
+    req->req.data = (void *) rec;
   } else {
-    req->req.data = req;
+    req->req.data = (void *) req;
   }
 
   return uv_fs_mkdir(loop, &req->req, path, mode, recursive ? on_mkdir_recursive : on_mkdir);

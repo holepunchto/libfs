@@ -12,6 +12,10 @@ if(NOT TARGET uv)
   add_subdirectory(vendor/libuv EXCLUDE_FROM_ALL)
 endif()
 
+if(NOT TARGET path)
+  add_subdirectory(vendor/libpath EXCLUDE_FROM_ALL)
+endif()
+
 add_library(fs OBJECT)
 
 set_target_properties(
@@ -99,6 +103,8 @@ target_include_directories(
   PUBLIC
     include
     $<TARGET_PROPERTY:uv,INCLUDE_DIRECTORIES>
+  PRIVATE
+    $<TARGET_PROPERTY:path,INCLUDE_DIRECTORIES>
 )
 
 add_library(fs_shared SHARED $<TARGET_OBJECTS:fs>)
@@ -113,6 +119,8 @@ target_link_libraries(
   fs_shared
   PUBLIC
     uv
+  PRIVATE
+    path_shared
 )
 
 add_library(fs_static STATIC $<TARGET_OBJECTS:fs>)
@@ -127,6 +135,8 @@ target_link_libraries(
   fs_static
   PUBLIC
     uv
+  PRIVATE
+    path_static
 )
 
 install(TARGETS fs_shared fs_static)

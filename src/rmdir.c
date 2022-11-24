@@ -1,6 +1,8 @@
 #include <limits.h>
+#include <path.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include <uv.h>
 
 #include "../include/fs.h"
@@ -10,7 +12,7 @@ typedef struct fs_rmdir_recursive_s fs_rmdir_recursive_t;
 struct fs_rmdir_recursive_s {
   fs_rmdir_t *req;
   fs_rmdir_recursive_t *parent;
-  const char *path;
+  char *path;
   int missing;
 };
 
@@ -18,28 +20,41 @@ static void
 on_rmdir_recursive (uv_fs_t *req);
 
 static void
-on_finished_maybe (uv_fs_t *req, fs_rmdir_recursive_t *rec, int err) {
-  uv_fs_req_cleanup(req);
+on_finished (fs_rmdir_t *req, int err) {
+  uv_fs_req_cleanup(&req->req);
+
+  free(req->path);
+
+  if (req->cb) req->cb(req, err < 0 ? err : 0);
+}
+
+static void
+on_finished_maybe (uv_fs_t *uv_req, fs_rmdir_recursive_t *rec, int err) {
+  uv_fs_req_cleanup(uv_req);
+
+  fs_rmdir_recursive_t *parent = rec->parent;
+  fs_rmdir_t *req = rec->req;
 
   if (rec->missing == 0) {
-    if (rec->parent == NULL) {
-      rec->req->cb(rec->req, err < 0 ? err : 0);
+    free(rec->path);
+    free(rec);
+
+    if (parent == NULL) {
+      on_finished(req, err);
     } else {
-      rec->parent->missing--;
+      parent->missing--;
 
-      if (rec->parent->missing == 0) {
-        req->data = rec->parent;
+      if (parent->missing == 0) {
+        uv_req->data = parent;
 
-        err = uv_fs_rmdir(req->loop, req, rec->parent->path, on_rmdir_recursive);
+        err = uv_fs_rmdir(uv_req->loop, uv_req, parent->path, on_rmdir_recursive);
 
         if (err == 0) return;
       }
     }
   }
 
-  uv_fs_req_cleanup(req);
-
-  free(req);
+  free(uv_req);
 }
 
 static void
@@ -85,17 +100,19 @@ on_scandir (uv_fs_t *req) {
 
   uv_dirent_t entry;
 
+  char path[PATH_MAX];
+
   for (size_t i = 0, n = (size_t) len; i < n; i++) {
     uv_fs_scandir_next(req, &entry);
 
-    size_t len = strlen(req->path) + strlen(entry.name) + 2;
+    size_t path_len = PATH_MAX;
 
-    char path[PATH_MAX];
-    path[0] = '\0';
-
-    strcpy(path, req->path);
-    strcat(path, "/");
-    strcat(path, entry.name);
+    path_join(
+      (const char *[]){req->path, entry.name, NULL},
+      path,
+      &path_len,
+      path_separator_system
+    );
 
     uv_fs_t *rm_req = malloc(sizeof(uv_fs_t));
     rm_req->data = rec;
@@ -141,13 +158,12 @@ on_rmdir (uv_fs_t *req) {
 
   uv_fs_req_cleanup(req);
 
-  rmdir_req->cb(rmdir_req, err < 0 ? err : 0);
+  on_finished(rmdir_req, err);
 }
 
 int
 fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb) {
-  req->req.data = req;
-  req->path = path;
+  req->path = strdup(path);
   req->cb = cb;
 
   if (recursive) {
@@ -158,9 +174,9 @@ fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs
     rec->path = strdup(path);
     rec->missing = 0;
 
-    req->req.data = rec;
+    req->req.data = (void *) rec;
   } else {
-    req->req.data = req;
+    req->req.data = (void *) req;
   }
 
   return uv_fs_rmdir(loop, &req->req, path, recursive ? on_rmdir_recursive : on_rmdir);

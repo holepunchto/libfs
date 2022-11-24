@@ -19,9 +19,8 @@ on_unlink (uv_fs_t *req) {
 
 int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb) {
-  req->req.data = req;
-  req->path = path;
   req->cb = cb;
+  req->req.data = (void *) req;
 
   return uv_fs_unlink(loop, &req->req, path, on_unlink);
 }

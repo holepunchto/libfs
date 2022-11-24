@@ -48,7 +48,9 @@ typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
 
 struct fs_open_s {
   uv_fs_t req;
-  const char *path;
+
+  int flags;
+  int mode;
 
   fs_open_cb cb;
 
@@ -57,7 +59,7 @@ struct fs_open_s {
 
 struct fs_access_s {
   uv_fs_t req;
-  const char *path;
+
   int mode;
 
   fs_access_cb cb;
@@ -195,7 +197,7 @@ struct fs_lock_s {
 
 struct fs_mkdir_s {
   uv_fs_t req;
-  const char *path;
+  char *path;
 
   int mode;
 
@@ -206,7 +208,7 @@ struct fs_mkdir_s {
 
 struct fs_rmdir_s {
   uv_fs_t req;
-  const char *path;
+  char *path;
 
   int mode;
 
@@ -217,7 +219,6 @@ struct fs_rmdir_s {
 
 struct fs_unlink_s {
   uv_fs_t req;
-  const char *path;
 
   fs_unlink_cb cb;
 
@@ -227,8 +228,8 @@ struct fs_unlink_s {
 struct fs_swap_s {
   uv_work_t req;
 
-  const char *from;
-  const char *to;
+  char *from;
+  char *to;
 
   fs_swap_cb cb;
 

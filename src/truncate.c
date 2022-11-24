@@ -19,9 +19,9 @@ on_truncate (uv_fs_t *req) {
 
 int
 fs_truncate (uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb) {
-  req->req.data = req;
   req->file = file;
   req->cb = cb;
+  req->req.data = (void *) req;
 
   return uv_fs_ftruncate(loop, &req->req, file, offset, on_truncate);
 }

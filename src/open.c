@@ -19,9 +19,10 @@ on_open (uv_fs_t *req) {
 
 int
 fs_open (uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb) {
-  req->req.data = req;
-  req->path = path;
+  req->flags = flags;
+  req->mode = mode;
   req->cb = cb;
+  req->req.data = (void *) req;
 
   return uv_fs_open(loop, &req->req, path, flags, mode, on_open);
 }

@@ -19,10 +19,9 @@ on_access (uv_fs_t *req) {
 
 int
 fs_access (uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb) {
-  req->req.data = req;
-  req->path = path;
   req->mode = mode;
   req->cb = cb;
+  req->req.data = (void *) req;
 
   return uv_fs_access(loop, &req->req, path, mode, on_access);
 }

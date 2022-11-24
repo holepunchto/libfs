@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <string.h>
 #include <uv.h>
 
 #include "../include/fs.h"
@@ -14,13 +16,16 @@ static void
 fs__swap_after_work (uv_work_t *req, int status) {
   fs_swap_t *r = (fs_swap_t *) req->data;
 
+  free(r->from);
+  free(r->to);
+
   if (r->cb) r->cb(r, r->result);
 }
 
 int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb) {
-  req->from = from;
-  req->to = to;
+  req->from = strdup(from);
+  req->to = strdup(to);
   req->cb = cb;
   req->req.data = (void *) req;
 
