@@ -17,7 +17,7 @@ on_realpath (uv_fs_t *req) {
   uv_fs_req_cleanup(req);
 
   if (status < 0) {
-    realpath_req->cb(realpath_req, status, &realpath);
+    realpath_req->cb(realpath_req, status, realpath);
   } else {
     realpath_req->cb(realpath_req, 0, NULL);
   }
