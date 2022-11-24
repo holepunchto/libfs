@@ -21,7 +21,7 @@ on_close (fs_close_t *req, int status) {
 }
 
 void
-on_read (fs_read_t *req, int status, ssize_t len) {
+on_read (fs_read_t *req, int status, size_t len) {
   assert(status == 0);
   assert(len == 12);
   assert(memcmp(buf.base, "hello world\n", len) == 0);

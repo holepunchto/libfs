@@ -11,7 +11,7 @@ on_read (uv_fs_t *req) {
   uv_fs_req_cleanup(req);
 
   if (read < 0) {
-    read_req->cb(read_req, read, -1);
+    read_req->cb(read_req, read, 0);
   } else {
     read_req->cb(read_req, 0, read);
   }

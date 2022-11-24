@@ -11,7 +11,7 @@ on_write (uv_fs_t *req) {
   uv_fs_req_cleanup(req);
 
   if (written < 0) {
-    write_req->cb(write_req, written, -1);
+    write_req->cb(write_req, written, 0);
   } else {
     write_req->cb(write_req, 0, written);
   }

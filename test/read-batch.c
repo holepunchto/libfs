@@ -22,7 +22,7 @@ on_close (fs_close_t *req, int status) {
 }
 
 void
-on_read (fs_read_batch_t *req, int status, ssize_t len) {
+on_read (fs_read_batch_t *req, int status, size_t len) {
   assert(status == 0);
   assert(len == 6);
   assert(memcmp(bufs[0].base, "hel", 3) == 0);
