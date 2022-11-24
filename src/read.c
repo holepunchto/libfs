@@ -6,13 +6,15 @@ static void
 on_read (uv_fs_t *req) {
   fs_read_t *read_req = (fs_read_t *) req->data;
 
-  if (req->result < 0) {
-    read_req->cb(read_req, req->result, -1);
-  } else {
-    read_req->cb(read_req, 0, req->result);
-  }
+  ssize_t read = req->result;
 
   uv_fs_req_cleanup(req);
+
+  if (read < 0) {
+    read_req->cb(read_req, read, -1);
+  } else {
+    read_req->cb(read_req, 0, read);
+  }
 }
 
 int

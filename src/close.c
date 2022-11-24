@@ -6,13 +6,15 @@ static void
 on_close (uv_fs_t *req) {
   fs_close_t *close_req = (fs_close_t *) req->data;
 
-  if (req->result < 0) {
-    close_req->cb(close_req, req->result);
+  int status = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (status < 0) {
+    close_req->cb(close_req, status);
   } else {
     close_req->cb(close_req, 0);
   }
-
-  uv_fs_req_cleanup(req);
 }
 
 int

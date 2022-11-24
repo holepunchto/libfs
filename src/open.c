@@ -6,13 +6,15 @@ static void
 on_open (uv_fs_t *req) {
   fs_open_t *open_req = (fs_open_t *) req->data;
 
-  if (req->result < 0) {
-    open_req->cb(open_req, req->result, -1);
-  } else {
-    open_req->cb(open_req, 0, req->result);
-  }
+  int fd = req->result;
 
   uv_fs_req_cleanup(req);
+
+  if (fd < 0) {
+    open_req->cb(open_req, fd, -1);
+  } else {
+    open_req->cb(open_req, 0, fd);
+  }
 }
 
 int

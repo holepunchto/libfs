@@ -1,3 +1,4 @@
+#include <limits.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <uv.h>
@@ -18,6 +19,8 @@ on_rmdir_recursive (uv_fs_t *req);
 
 static void
 on_finished_maybe (uv_fs_t *req, fs_rmdir_recursive_t *rec, int err) {
+  uv_fs_req_cleanup(req);
+
   if (rec->missing == 0) {
     if (rec->parent == NULL) {
       rec->req->cb(rec->req, err < 0 ? err : 0);
@@ -26,8 +29,6 @@ on_finished_maybe (uv_fs_t *req, fs_rmdir_recursive_t *rec, int err) {
 
       if (rec->parent->missing == 0) {
         req->data = rec->parent;
-
-        uv_fs_req_cleanup(req);
 
         err = uv_fs_rmdir(req->loop, req, rec->parent->path, on_rmdir_recursive);
 
@@ -89,7 +90,8 @@ on_scandir (uv_fs_t *req) {
 
     size_t len = strlen(req->path) + strlen(entry.name) + 2;
 
-    char *path = calloc(len, sizeof(char));
+    char path[PATH_MAX];
+    path[0] = '\0';
 
     strcpy(path, req->path);
     strcat(path, "/");
@@ -99,8 +101,6 @@ on_scandir (uv_fs_t *req) {
     rm_req->data = rec;
 
     int err = uv_fs_unlink(req->loop, rm_req, path, on_unlink);
-
-    free(path);
 
     if (err < 0) free(rm_req);
     else rec->missing++;
@@ -115,13 +115,13 @@ on_rmdir_recursive (uv_fs_t *req) {
 
   int err = req->result;
 
+  uv_fs_req_cleanup(req);
+
   switch (err) {
   case 0:
     break;
 
   case UV_ENOTEMPTY: {
-    uv_fs_req_cleanup(req);
-
     err = uv_fs_scandir(req->loop, req, rec->path, 0, on_scandir);
 
     if (err == 0) return;
@@ -139,9 +139,9 @@ on_rmdir (uv_fs_t *req) {
 
   int err = req->result;
 
-  rmdir_req->cb(rmdir_req, err < 0 ? err : 0);
-
   uv_fs_req_cleanup(req);
+
+  rmdir_req->cb(rmdir_req, err < 0 ? err : 0);
 }
 
 int

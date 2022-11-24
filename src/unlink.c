@@ -6,13 +6,15 @@ static void
 on_unlink (uv_fs_t *req) {
   fs_unlink_t *unlink_req = (fs_unlink_t *) req->data;
 
-  if (req->result < 0) {
-    unlink_req->cb(unlink_req, req->result);
+  int status = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (status < 0) {
+    unlink_req->cb(unlink_req, status);
   } else {
     unlink_req->cb(unlink_req, 0);
   }
-
-  uv_fs_req_cleanup(req);
 }
 
 int

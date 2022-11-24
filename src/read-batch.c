@@ -21,17 +21,19 @@ on_read_batch (uv_fs_t *req) {
 
   read_req->remaining -= batched;
 
-  if (req->result < 0) {
-    read_req->cb(read_req, req->result, -1);
+  ssize_t read = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (read < 0) {
+    read_req->cb(read_req, read, -1);
   } else {
-    read_req->len += req->result;
+    read_req->len += read;
 
     if (read_req->remaining == 0) {
       read_req->cb(read_req, 0, read_req->len);
     }
   }
-
-  uv_fs_req_cleanup(req);
 
   if (read_req->remaining) {
     read_req->bufs += batched;

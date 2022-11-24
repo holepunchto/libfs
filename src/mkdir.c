@@ -37,11 +37,11 @@ last_path_sep (const char *path) {
 
 static void
 on_finished (fs_mkdir_recursive_t *rec, int err) {
+  uv_fs_req_cleanup(&rec->req->req);
+
   rec->req->cb(rec->req, err < 0 ? err : 0);
 
   if (rec->next != NULL) free(rec->next);
-
-  uv_fs_req_cleanup(&rec->req->req);
 
   free(rec);
 }
@@ -127,9 +127,9 @@ on_mkdir (uv_fs_t *req) {
 
   int err = req->result;
 
-  mkdir_req->cb(mkdir_req, err < 0 ? err : 0);
-
   uv_fs_req_cleanup(req);
+
+  mkdir_req->cb(mkdir_req, err < 0 ? err : 0);
 }
 
 int

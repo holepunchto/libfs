@@ -6,13 +6,15 @@ static void
 on_access (uv_fs_t *req) {
   fs_access_t *access_req = (fs_access_t *) req->data;
 
-  if (req->result < 0) {
-    access_req->cb(access_req, req->result);
+  int status = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (status < 0) {
+    access_req->cb(access_req, status);
   } else {
     access_req->cb(access_req, 0);
   }
-
-  uv_fs_req_cleanup(req);
 }
 
 int

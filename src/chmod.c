@@ -6,13 +6,15 @@ static void
 on_chmod (uv_fs_t *req) {
   fs_chmod_t *chmod_req = (fs_chmod_t *) req->data;
 
-  if (req->result < 0) {
-    chmod_req->cb(chmod_req, req->result);
+  int status = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (status < 0) {
+    chmod_req->cb(chmod_req, status);
   } else {
     chmod_req->cb(chmod_req, 0);
   }
-
-  uv_fs_req_cleanup(req);
 }
 
 int

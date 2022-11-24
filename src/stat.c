@@ -6,13 +6,15 @@ static void
 on_stat (uv_fs_t *req) {
   fs_stat_t *stat_req = (fs_stat_t *) req->data;
 
-  if (req->result < 0) {
-    stat_req->cb(stat_req, req->result, NULL);
+  int status = req->result;
+
+  uv_fs_req_cleanup(req);
+
+  if (status < 0) {
+    stat_req->cb(stat_req, status, NULL);
   } else {
     stat_req->cb(stat_req, 0, &req->statbuf);
   }
-
-  uv_fs_req_cleanup(req);
 }
 
 int

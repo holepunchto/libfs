@@ -6,13 +6,15 @@ static void
 on_write (uv_fs_t *req) {
   fs_write_t *write_req = (fs_write_t *) req->data;
 
-  if (req->result < 0) {
-    write_req->cb(write_req, req->result, -1);
-  } else {
-    write_req->cb(write_req, 0, req->result);
-  }
+  ssize_t written = req->result;
 
   uv_fs_req_cleanup(req);
+
+  if (written < 0) {
+    write_req->cb(write_req, written, -1);
+  } else {
+    write_req->cb(write_req, 0, written);
+  }
 }
 
 int
