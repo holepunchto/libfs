@@ -40,6 +40,7 @@ target_sources(
     src/read.c
     src/read-batch.c
     src/realpath.c
+    src/rename.c
     src/rmdir.c
     src/sparse.c
     src/stat.c

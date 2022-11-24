@@ -27,6 +27,7 @@ typedef struct fs_realpath_s fs_realpath_t;
 typedef struct fs_mkdir_s fs_mkdir_t;
 typedef struct fs_rmdir_s fs_rmdir_t;
 typedef struct fs_unlink_s fs_unlink_t;
+typedef struct fs_rename_s fs_rename_t;
 typedef struct fs_swap_s fs_swap_t;
 
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
@@ -46,6 +47,7 @@ typedef void (*fs_realpath_cb)(fs_realpath_t *req, int status, const char *path)
 typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
 typedef void (*fs_rmdir_cb)(fs_rmdir_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
+typedef void (*fs_rename_cb)(fs_rename_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
 
 struct fs_open_s {
@@ -235,6 +237,14 @@ struct fs_unlink_s {
   void *data;
 };
 
+struct fs_rename_s {
+  uv_fs_t req;
+
+  fs_rename_cb cb;
+
+  void *data;
+};
+
 struct fs_swap_s {
   uv_work_t req;
 
@@ -316,6 +326,9 @@ fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs
 
 int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
+
+int
+fs_rename (uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb);
 
 int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
