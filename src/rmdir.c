@@ -54,7 +54,7 @@ on_finished_maybe (uv_fs_t *uv_req, fs_rmdir_recursive_t *rec, int err) {
     }
   }
 
-  free(uv_req);
+  if (parent) free(uv_req);
 }
 
 static void
