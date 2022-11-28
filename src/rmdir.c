@@ -111,7 +111,7 @@ on_scandir (uv_fs_t *req) {
       (const char *[]){req->path, entry.name, NULL},
       path,
       &path_len,
-      path_separator_system
+      path_behavior_system
     );
 
     uv_fs_t *rm_req = malloc(sizeof(uv_fs_t));

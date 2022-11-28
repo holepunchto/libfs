@@ -75,7 +75,7 @@ on_mkdir_recursive (uv_fs_t *req) {
   case UV_ENOENT: {
     size_t dirname = 0;
 
-    path_dirname(req->path, &dirname, path_separator_system);
+    path_dirname(req->path, &dirname, path_behavior_system);
 
     if (dirname == strlen(req->path)) break;
 
