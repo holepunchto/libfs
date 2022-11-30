@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <string.h>
 #include <uv.h>
 
@@ -10,9 +9,12 @@ on_realpath (uv_fs_t *req) {
 
   int status = req->result;
 
-  char realpath[PATH_MAX];
+  char realpath[1024]; // TODO: Dynamically allocate this?
+  size_t realpath_len = strlen((char *) req->ptr);
 
-  if (status >= 0) strncpy(realpath, (char *) req->ptr, PATH_MAX);
+  if (realpath_len >= 1024) status = UV_EOVERFLOW;
+
+  if (status >= 0) strcpy(realpath, (char *) req->ptr);
 
   uv_fs_req_cleanup(req);
 

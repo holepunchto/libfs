@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <path.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -100,24 +99,28 @@ on_scandir (uv_fs_t *req) {
 
   uv_dirent_t entry;
 
-  char path[PATH_MAX];
+  char path[1024]; // TODO: Dynamically allocate this?
 
   for (size_t i = 0, n = (size_t) len; i < n; i++) {
+    int err;
+
     uv_fs_scandir_next(req, &entry);
 
-    size_t path_len = PATH_MAX;
+    size_t path_len = 1024;
 
-    path_join(
+    err = path_join(
       (const char *[]){req->path, entry.name, NULL},
       path,
       &path_len,
       path_behavior_system
     );
 
+    if (err < 0) continue;
+
     uv_fs_t *rm_req = malloc(sizeof(uv_fs_t));
     rm_req->data = rec;
 
-    int err = uv_fs_unlink(req->loop, rm_req, path, on_unlink);
+    err = uv_fs_unlink(req->loop, rm_req, path, on_unlink);
 
     if (err < 0) free(rm_req);
     else rec->missing++;
