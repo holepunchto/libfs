@@ -136,7 +136,7 @@ set_target_properties(
 target_link_libraries(
   fs_static
   PUBLIC
-    uv
+    uv_a
   PRIVATE
     path_static
 )
