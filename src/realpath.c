@@ -15,8 +15,7 @@ on_realpath (uv_fs_t *req) {
     size_t realpath_len = strlen((char *) req->ptr);
 
     if (realpath_len >= 1024) status = UV_EOVERFLOW;
-
-    strcpy(realpath, (char *) req->ptr);
+    else strcpy(realpath, (char *) req->ptr);
   }
 
   uv_fs_req_cleanup(req);
