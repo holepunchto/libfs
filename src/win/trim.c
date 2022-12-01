@@ -7,6 +7,8 @@
 
 int
 fs__trim (uv_file file, int64_t offset, size_t length) {
+  HANDLE handle = uv_get_osfhandle(file);
+
   FILE_ZERO_DATA_INFORMATION data = {
     .FileOffset = {
       .QuadPart = offset,
@@ -19,7 +21,7 @@ fs__trim (uv_file file, int64_t offset, size_t length) {
   DWORD bytes;
 
   BOOL res = DeviceIoControl(
-    file,
+    handle,
     FSCTL_SET_ZERO_DATA,
     &data,
     sizeof(data),

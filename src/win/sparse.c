@@ -7,10 +7,12 @@
 
 int
 fs__sparse (uv_file file) {
+  HANDLE handle = uv_get_osfhandle(file);
+
   DWORD bytes;
 
   BOOL res = DeviceIoControl(
-    file,
+    handle,
     FSCTL_SET_SPARSE,
     NULL,
     0,

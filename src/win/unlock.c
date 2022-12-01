@@ -7,6 +7,8 @@
 
 int
 fs__unlock (uv_file file, int64_t offset, size_t length) {
+  HANDLE handle = uv_get_osfhandle(file);
+
   if (length == 0) length = SIZE_MAX;
 
   OVERLAPPED data = {
@@ -16,7 +18,7 @@ fs__unlock (uv_file file, int64_t offset, size_t length) {
   };
 
   BOOL res = UnlockFileEx(
-    file,
+    handle,
     0,
     length,
     length >> 32,

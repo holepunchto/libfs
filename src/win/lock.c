@@ -7,6 +7,8 @@
 
 int
 fs__lock (uv_file file, int64_t offset, size_t length, bool shared) {
+  HANDLE handle = uv_get_osfhandle(file);
+
   if (length == 0) length = SIZE_MAX;
 
   DWORD flags = 0;
@@ -20,7 +22,7 @@ fs__lock (uv_file file, int64_t offset, size_t length, bool shared) {
   };
 
   BOOL res = LockFileEx(
-    file,
+    handle,
     flags,
     0,
     length,
