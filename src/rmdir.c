@@ -95,7 +95,7 @@ static void
 on_scandir (uv_fs_t *req) {
   fs_rmdir_recursive_t *rec = (fs_rmdir_recursive_t *) req->data;
 
-  ssize_t len = req->result;
+  ssize_t len = req->result; // TODO: Handle error
 
   uv_dirent_t entry;
 
