@@ -39,6 +39,7 @@ target_sources(
     src/sparse.c
     src/stat.c
     src/swap.c
+    src/symlink.c
     src/trim.c
     src/truncate.c
     src/try-lock.c

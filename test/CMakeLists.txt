@@ -5,6 +5,7 @@ list(APPEND tests
   read
   read-batch
   stat
+  symlink
 )
 
 foreach(test IN LISTS tests)

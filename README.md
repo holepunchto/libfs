@@ -8,4 +8,4 @@ See [`include/fs.h`](include/fs.h) for the public API.
 
 ## License
 
-ISC
+Apache-2.0
