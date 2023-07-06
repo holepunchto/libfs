@@ -1,4 +1,6 @@
 list(APPEND tests
+  merge
+  merge-onto-missing
   mkdir-rmdir
   mkdir-rmdir-recursive
   open-close

@@ -28,6 +28,7 @@ target_sources(
     src/chmod.c
     src/close.c
     src/lock.c
+    src/merge.c
     src/mkdir.c
     src/open.c
     src/platform.h

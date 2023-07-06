@@ -9,12 +9,12 @@ on_realpath (uv_fs_t *req) {
 
   int status = req->result;
 
-  char realpath[1024]; // TODO: Dynamically allocate this?
+  char realpath[4097];
 
   if (status >= 0) {
     size_t realpath_len = strlen((char *) req->ptr);
 
-    if (realpath_len >= 1024) status = UV_EOVERFLOW;
+    if (realpath_len >= 4097) status = UV_EOVERFLOW;
     else strcpy(realpath, (char *) req->ptr);
   }
 

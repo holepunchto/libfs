@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <path.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,9 +10,9 @@
 #define S_ISDIR(m) (((m) &S_IFMT) == S_IFDIR)
 #endif
 
-typedef struct fs_mkdir_recursive_s fs_mkdir_recursive_t;
+typedef struct fs_mkdir_step_s fs_mkdir_step_t;
 
-struct fs_mkdir_recursive_s {
+struct fs_mkdir_step_s {
   fs_mkdir_t *req;
   char *next;
 };
@@ -27,7 +28,7 @@ on_finished (fs_mkdir_t *req, int err) {
 
 static void
 on_stat (uv_fs_t *req) {
-  fs_mkdir_recursive_t *rec = (fs_mkdir_recursive_t *) req->data;
+  fs_mkdir_step_t *rec = (fs_mkdir_step_t *) req->data;
 
   int err = req->result;
 
@@ -44,7 +45,7 @@ on_stat (uv_fs_t *req) {
 
 static void
 on_mkdir_recursive (uv_fs_t *req) {
-  fs_mkdir_recursive_t *rec = (fs_mkdir_recursive_t *) req->data;
+  fs_mkdir_step_t *rec = (fs_mkdir_step_t *) req->data;
 
   int err = req->result;
 
@@ -67,10 +68,9 @@ on_mkdir_recursive (uv_fs_t *req) {
     uv_fs_req_cleanup(req);
 
     err = uv_fs_mkdir(req->loop, req, rec->next, rec->req->mode, on_mkdir_recursive);
+    assert(err == 0);
 
-    if (err == 0) return;
-
-    break;
+    return;
   }
 
   case UV_ENOENT: {
@@ -89,18 +89,18 @@ on_mkdir_recursive (uv_fs_t *req) {
     uv_fs_req_cleanup(req);
 
     err = uv_fs_mkdir(req->loop, req, rec->next, rec->req->mode, on_mkdir_recursive);
+    assert(err == 0);
 
-    if (err == 0) return;
-
-    break;
+    return;
   }
 
   default:
     uv_fs_req_cleanup(req);
 
     err = uv_fs_stat(req->loop, req, rec->req->path, on_stat);
+    assert(err == 0);
 
-    if (err == 0) return;
+    return;
   }
 
   on_finished(rec->req, err);
@@ -128,7 +128,7 @@ fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool rec
   req->cb = cb;
 
   if (recursive) {
-    fs_mkdir_recursive_t *rec = malloc(sizeof(fs_mkdir_recursive_t));
+    fs_mkdir_step_t *rec = malloc(sizeof(fs_mkdir_step_t));
 
     rec->req = req;
     rec->next = NULL;

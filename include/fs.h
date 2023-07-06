@@ -30,6 +30,7 @@ typedef struct fs_symlink_s fs_symlink_t;
 typedef struct fs_unlink_s fs_unlink_t;
 typedef struct fs_rename_s fs_rename_t;
 typedef struct fs_swap_s fs_swap_t;
+typedef struct fs_merge_s fs_merge_t;
 
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
 typedef void (*fs_access_cb)(fs_access_t *req, int status);
@@ -51,6 +52,7 @@ typedef void (*fs_symlink_cb)(fs_symlink_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
 typedef void (*fs_rename_cb)(fs_rename_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
+typedef void (*fs_merge_cb)(fs_merge_t *req, int status);
 
 struct fs_open_s {
   uv_fs_t req;
@@ -228,6 +230,8 @@ struct fs_rmdir_s {
 
   fs_rmdir_cb cb;
 
+  int result;
+
   void *data;
 };
 
@@ -264,6 +268,18 @@ struct fs_swap_s {
   char *to;
 
   fs_swap_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_merge_s {
+  uv_fs_t req;
+
+  bool replace;
+
+  fs_merge_cb cb;
 
   int result;
 
@@ -347,6 +363,9 @@ fs_rename (uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, 
 
 int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+
+int
+fs_merge (uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb);
 
 #ifdef __cplusplus
 }
