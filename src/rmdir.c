@@ -101,7 +101,11 @@ on_scandir (uv_fs_t *req) {
 
   ssize_t len = req->result;
 
-  if (len <= 0) return on_finished_maybe(req, rec, len);
+  if (len <= 0) {
+    on_finished_maybe(req, rec, len);
+
+    return;
+  }
 
   uv_dirent_t entry;
 

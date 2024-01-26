@@ -8,7 +8,7 @@
 #include "../include/fs.h"
 
 #ifndef S_ISDIR
-#define S_ISDIR(m) (((m) &S_IFMT) == S_IFDIR)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
 typedef struct fs_merge_step_s fs_merge_step_t;
@@ -94,7 +94,11 @@ on_scandir (uv_fs_t *req) {
 
   ssize_t len = req->result;
 
-  if (len < 0) return on_finished_maybe(req, rec, len);
+  if (len < 0) {
+    on_finished_maybe(req, rec, len);
+
+    return;
+  }
 
   if (len == 0) {
     uv_fs_req_cleanup(req);
