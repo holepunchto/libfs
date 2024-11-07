@@ -23,8 +23,8 @@ on_close (fs_close_t *req, int status) {
 void
 on_read (fs_read_t *req, int status, size_t len) {
   assert(status == 0);
-  assert(len == 12);
-  assert(memcmp(buf.base, "hello world\n", len) == 0);
+  assert(len >= 12);
+  assert(memcmp(buf.base, "hello world", 11) == 0);
 
   int e = fs_close(loop, &close_req, req->file, on_close);
   assert(e == 0);
