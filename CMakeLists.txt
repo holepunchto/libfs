@@ -105,7 +105,7 @@ target_include_directories(
     $<TARGET_PROPERTY:path,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
-add_library(fs_shared SHARED $<TARGET_OBJECTS:fs>)
+add_library(fs_shared SHARED)
 
 set_target_properties(
   fs_shared
@@ -117,22 +117,25 @@ set_target_properties(
 target_link_libraries(
   fs_shared
   PUBLIC
+    fs
     uv
   PRIVATE
     path_shared
 )
 
-add_library(fs_static STATIC $<TARGET_OBJECTS:fs>)
+add_library(fs_static STATIC)
 
 set_target_properties(
   fs_static
   PROPERTIES
   OUTPUT_NAME fs
+  PREFIX lib
 )
 
 target_link_libraries(
   fs_static
   PUBLIC
+    fs
     uv_a
   PRIVATE
     path_static
@@ -144,5 +147,6 @@ install(FILES include/fs.h DESTINATION include)
 
 if(PROJECT_IS_TOP_LEVEL)
   enable_testing()
+
   add_subdirectory(test)
 endif()
