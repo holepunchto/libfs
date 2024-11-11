@@ -1,0 +1,17 @@
+{
+  "private": true,
+  "name": "libfs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/holepunchto/libfs.git"
+  },
+  "author": "Holepunch",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/holepunchto/libfs/issues"
+  },
+  "homepage": "https://github.com/holepunchto/libfs#readme",
+  "devDependencies": {
+    "cmake-fetch": "^1.1.0"
+  }
+}

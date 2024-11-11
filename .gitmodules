@@ -1,6 +1,0 @@
-[submodule "vendor/libuv"]
-	path = vendor/libuv
-	url = ../../libuv/libuv.git
-[submodule "vendor/libpath"]
-	path = vendor/libpath
-	url = ../../holepunchto/libpath.git
