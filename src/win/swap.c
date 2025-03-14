@@ -6,7 +6,7 @@
 #include "../platform.h"
 
 static int
-fs__temp_path (char *path) {
+fs__temp_path(char *path) {
   TCHAR temp_path[MAX_PATH];
 
   DWORD bytes = GetTempPath(MAX_PATH, temp_path);
@@ -19,7 +19,7 @@ fs__temp_path (char *path) {
 }
 
 static int
-fs__move (const char *from, const char *to) {
+fs__move(const char *from, const char *to) {
   BOOL res = MoveFileEx(
     from,
     to,
@@ -30,7 +30,7 @@ fs__move (const char *from, const char *to) {
 }
 
 int
-fs__swap (const char *from, const char *to) {
+fs__swap(const char *from, const char *to) {
   TCHAR swap[MAX_PATH];
 
   int err = fs__temp_path(swap);

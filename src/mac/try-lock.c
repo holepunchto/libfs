@@ -9,7 +9,7 @@
 #include "../platform.h"
 
 int
-fs__try_lock (uv_file file, int64_t offset, size_t length, bool shared) {
+fs__try_lock(uv_file file, int64_t offset, size_t length, bool shared) {
   if (offset != 0 || length != 0) return UV_EINVAL;
 
   int res = flock(file, (shared ? LOCK_SH : LOCK_EX) | LOCK_NB);

@@ -13,7 +13,7 @@
 #endif
 
 int
-fs__swap (const char *from, const char *to) {
+fs__swap(const char *from, const char *to) {
   int res = syscall(SYS_renameat2, AT_FDCWD, from, AT_FDCWD, to, RENAME_EXCHANGE);
 
   return res == -1 ? uv_translate_sys_error(errno) : res;

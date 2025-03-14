@@ -14,12 +14,12 @@ fs_close_t close_req;
 bool stat_called = false;
 
 void
-on_close (fs_close_t *req, int status) {
+on_close(fs_close_t *req, int status) {
   assert(status == 0);
 }
 
 void
-on_stat (fs_stat_t *req, int status, const uv_stat_t *stat) {
+on_stat(fs_stat_t *req, int status, const uv_stat_t *stat) {
   assert(status == 0);
   assert(stat->st_size >= 12);
 
@@ -30,7 +30,7 @@ on_stat (fs_stat_t *req, int status, const uv_stat_t *stat) {
 }
 
 void
-on_open (fs_open_t *req, int status, uv_file file) {
+on_open(fs_open_t *req, int status, uv_file file) {
   assert(status == 0);
 
   int e = fs_stat(loop, &stat_req, file, on_stat);
@@ -38,7 +38,7 @@ on_open (fs_open_t *req, int status, uv_file file) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   fs_open(loop, &open_req, "test/fixtures/read.txt", O_RDONLY, 0, on_open);

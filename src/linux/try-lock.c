@@ -11,7 +11,7 @@
 #include "../platform.h"
 
 int
-fs__try_lock (uv_file file, int64_t offset, size_t length, bool shared) {
+fs__try_lock(uv_file file, int64_t offset, size_t length, bool shared) {
   struct flock data = {
     .l_start = offset,
     .l_len = length,

@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static size_t
-contiguous_bufs (const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[]) {
+contiguous_bufs(const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[]) {
   size_t n = 1;
 
   while (n < bufs_len && offsets[n - 1] + bufs[n - 1].len == (uint64_t) offsets[n]) {
@@ -14,7 +14,7 @@ contiguous_bufs (const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[]
 }
 
 static void
-on_write_batch (uv_fs_t *req) {
+on_write_batch(uv_fs_t *req) {
   fs_write_batch_t *write_req = (fs_write_batch_t *) req->data;
 
   size_t batched = write_req->batched;
@@ -62,7 +62,7 @@ on_write_batch (uv_fs_t *req) {
 }
 
 int
-fs_write_batch (uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb) {
+fs_write_batch(uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb) {
   if (bufs_len < 1) return UV_EINVAL;
 
   req->file = file;

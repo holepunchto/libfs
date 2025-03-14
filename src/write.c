@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_write (uv_fs_t *req) {
+on_write(uv_fs_t *req) {
   fs_write_t *write_req = (fs_write_t *) req->data;
 
   ssize_t written = req->result;
@@ -18,7 +18,7 @@ on_write (uv_fs_t *req) {
 }
 
 int
-fs_write (uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_write_cb cb) {
+fs_write(uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_write_cb cb) {
   req->file = file;
   req->cb = cb;
   req->req.data = (void *) req;

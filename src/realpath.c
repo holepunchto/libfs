@@ -4,7 +4,7 @@
 #include "../include/fs.h"
 
 static void
-on_realpath (uv_fs_t *req) {
+on_realpath(uv_fs_t *req) {
   fs_realpath_t *realpath_req = (fs_realpath_t *) req->data;
 
   int status = req->result;
@@ -28,7 +28,7 @@ on_realpath (uv_fs_t *req) {
 }
 
 int
-fs_realpath (uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb) {
+fs_realpath(uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb) {
   req->cb = cb;
   req->req.data = (void *) req;
 

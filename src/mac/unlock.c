@@ -9,7 +9,7 @@
 #include "../platform.h"
 
 int
-fs__unlock (uv_file file, int64_t offset, size_t length) {
+fs__unlock(uv_file file, int64_t offset, size_t length) {
   if (offset != 0 || length != 0) return UV_EINVAL;
 
   int res = flock(file, LOCK_UN);

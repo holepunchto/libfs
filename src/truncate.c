@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_truncate (uv_fs_t *req) {
+on_truncate(uv_fs_t *req) {
   fs_truncate_t *truncate_req = (fs_truncate_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_truncate (uv_fs_t *req) {
 }
 
 int
-fs_truncate (uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb) {
+fs_truncate(uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb) {
   req->file = file;
   req->cb = cb;
   req->req.data = (void *) req;

@@ -17,10 +17,10 @@ struct fs_rmdir_step_s {
 };
 
 static void
-on_rmdir_recursive (uv_fs_t *req);
+on_rmdir_recursive(uv_fs_t *req);
 
 static void
-on_finished (fs_rmdir_t *req) {
+on_finished(fs_rmdir_t *req) {
   uv_fs_req_cleanup(&req->req);
 
   free(req->path);
@@ -29,7 +29,7 @@ on_finished (fs_rmdir_t *req) {
 }
 
 static void
-on_finished_maybe (uv_fs_t *uv_req, fs_rmdir_step_t *rec, int err) {
+on_finished_maybe(uv_fs_t *uv_req, fs_rmdir_step_t *rec, int err) {
   uv_fs_req_cleanup(uv_req);
 
   fs_rmdir_step_t *parent = rec->parent;
@@ -61,7 +61,7 @@ on_finished_maybe (uv_fs_t *uv_req, fs_rmdir_step_t *rec, int err) {
 }
 
 static void
-on_unlink (uv_fs_t *req) {
+on_unlink(uv_fs_t *req) {
   fs_rmdir_step_t *rec = (fs_rmdir_step_t *) req->data;
 
   int err = req->result;
@@ -96,7 +96,7 @@ on_unlink (uv_fs_t *req) {
 }
 
 static void
-on_scandir (uv_fs_t *req) {
+on_scandir(uv_fs_t *req) {
   fs_rmdir_step_t *rec = (fs_rmdir_step_t *) req->data;
 
   ssize_t len = req->result;
@@ -120,7 +120,7 @@ on_scandir (uv_fs_t *req) {
     path_len = 4097;
 
     err = path_join(
-      (const char *[]){req->path, entry.name, NULL},
+      (const char *[]) {req->path, entry.name, NULL},
       path,
       &path_len,
       path_behavior_system
@@ -142,7 +142,7 @@ on_scandir (uv_fs_t *req) {
 }
 
 static void
-on_rmdir_recursive (uv_fs_t *req) {
+on_rmdir_recursive(uv_fs_t *req) {
   fs_rmdir_step_t *rec = (fs_rmdir_step_t *) req->data;
 
   int err = req->result;
@@ -165,7 +165,7 @@ on_rmdir_recursive (uv_fs_t *req) {
 }
 
 static void
-on_rmdir (uv_fs_t *req) {
+on_rmdir(uv_fs_t *req) {
   fs_rmdir_t *rmdir_req = (fs_rmdir_t *) req->data;
 
   int err = req->result;
@@ -176,7 +176,7 @@ on_rmdir (uv_fs_t *req) {
 }
 
 int
-fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb) {
+fs_rmdir(uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb) {
   req->path = strdup(path);
   req->cb = cb;
   req->result = 0;

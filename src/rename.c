@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_rename (uv_fs_t *req) {
+on_rename(uv_fs_t *req) {
   fs_rename_t *rename_req = (fs_rename_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_rename (uv_fs_t *req) {
 }
 
 int
-fs_rename (uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb) {
+fs_rename(uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb) {
   req->cb = cb;
   req->req.data = (void *) req;
 

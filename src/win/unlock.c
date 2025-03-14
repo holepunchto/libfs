@@ -6,7 +6,7 @@
 #include "../platform.h"
 
 int
-fs__unlock (uv_file file, int64_t offset, size_t length) {
+fs__unlock(uv_file file, int64_t offset, size_t length) {
   HANDLE handle = uv_get_osfhandle(file);
 
   if (length == 0) length = SIZE_MAX;
