@@ -10,7 +10,7 @@
 #include "../platform.h"
 
 int
-fs__unlock (uv_file file, int64_t offset, size_t length) {
+fs__unlock(uv_file file, int64_t offset, size_t length) {
   struct flock data = {
     .l_start = offset,
     .l_len = length,

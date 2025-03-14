@@ -6,7 +6,7 @@
 #include "../platform.h"
 
 int
-fs__sparse (uv_file file) {
+fs__sparse(uv_file file) {
   HANDLE handle = uv_get_osfhandle(file);
 
   DWORD bytes;

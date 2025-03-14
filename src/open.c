@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_open (uv_fs_t *req) {
+on_open(uv_fs_t *req) {
   fs_open_t *open_req = (fs_open_t *) req->data;
 
   int fd = req->result;
@@ -18,7 +18,7 @@ on_open (uv_fs_t *req) {
 }
 
 int
-fs_open (uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb) {
+fs_open(uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb) {
   req->flags = flags;
   req->mode = mode;
   req->cb = cb;

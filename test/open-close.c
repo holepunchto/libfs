@@ -13,14 +13,14 @@ bool open_called = false;
 bool close_called = false;
 
 void
-on_close (fs_close_t *req, int status) {
+on_close(fs_close_t *req, int status) {
   assert(status == 0);
 
   close_called = true;
 }
 
 void
-on_open (fs_open_t *req, int status, uv_file file) {
+on_open(fs_open_t *req, int status, uv_file file) {
   assert(status == 0);
 
   int e = fs_close(loop, &close_req, file, on_close);
@@ -30,7 +30,7 @@ on_open (fs_open_t *req, int status, uv_file file) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   int e = fs_open(loop, &open_req, "test/fixtures/read.txt", O_RDONLY, 0, on_open);

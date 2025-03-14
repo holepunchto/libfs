@@ -7,7 +7,7 @@
 #include "../include/fs.h"
 
 #ifndef S_ISDIR
-#define S_ISDIR(m) (((m) &S_IFMT) == S_IFDIR)
+#define S_ISDIR(m) (((m) & S_IFMT) == S_IFDIR)
 #endif
 
 typedef struct fs_mkdir_step_s fs_mkdir_step_t;
@@ -18,7 +18,7 @@ struct fs_mkdir_step_s {
 };
 
 static void
-on_finished (fs_mkdir_t *req, int err) {
+on_finished(fs_mkdir_t *req, int err) {
   uv_fs_req_cleanup(&req->req);
 
   free(req->path);
@@ -27,7 +27,7 @@ on_finished (fs_mkdir_t *req, int err) {
 }
 
 static void
-on_stat (uv_fs_t *req) {
+on_stat(uv_fs_t *req) {
   fs_mkdir_step_t *rec = (fs_mkdir_step_t *) req->data;
 
   int err = req->result;
@@ -44,7 +44,7 @@ on_stat (uv_fs_t *req) {
 }
 
 static void
-on_mkdir_recursive (uv_fs_t *req) {
+on_mkdir_recursive(uv_fs_t *req) {
   fs_mkdir_step_t *rec = (fs_mkdir_step_t *) req->data;
 
   int err = req->result;
@@ -111,7 +111,7 @@ on_mkdir_recursive (uv_fs_t *req) {
 }
 
 static void
-on_mkdir (uv_fs_t *req) {
+on_mkdir(uv_fs_t *req) {
   fs_mkdir_t *mkdir_req = (fs_mkdir_t *) req->data;
 
   int err = req->result;
@@ -122,7 +122,7 @@ on_mkdir (uv_fs_t *req) {
 }
 
 int
-fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb) {
+fs_mkdir(uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb) {
   req->path = strdup(path);
   req->mode = mode;
   req->cb = cb;

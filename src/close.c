@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_close (uv_fs_t *req) {
+on_close(uv_fs_t *req) {
   fs_close_t *close_req = (fs_close_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_close (uv_fs_t *req) {
 }
 
 int
-fs_close (uv_loop_t *loop, fs_close_t *req, uv_file file, fs_close_cb cb) {
+fs_close(uv_loop_t *loop, fs_close_t *req, uv_file file, fs_close_cb cb) {
   req->file = file;
   req->cb = cb;
   req->req.data = (void *) req;

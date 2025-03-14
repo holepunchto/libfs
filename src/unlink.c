@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_unlink (uv_fs_t *req) {
+on_unlink(uv_fs_t *req) {
   fs_unlink_t *unlink_req = (fs_unlink_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_unlink (uv_fs_t *req) {
 }
 
 int
-fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb) {
+fs_unlink(uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb) {
   req->cb = cb;
   req->req.data = (void *) req;
 

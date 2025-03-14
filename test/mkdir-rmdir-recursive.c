@@ -13,14 +13,14 @@ bool mkdir_called = false;
 bool rmdir_called = false;
 
 void
-on_rmdir (fs_rmdir_t *req, int status) {
+on_rmdir(fs_rmdir_t *req, int status) {
   assert(status == 0);
 
   rmdir_called = true;
 }
 
 void
-on_mkdir (fs_mkdir_t *req, int status) {
+on_mkdir(fs_mkdir_t *req, int status) {
   assert(status == 0);
 
   mkdir_called = true;
@@ -30,7 +30,7 @@ on_mkdir (fs_mkdir_t *req, int status) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   int e = fs_mkdir(loop, &mkdir_req, "test/fixtures/mkdir/a/b/c", 0777, true, on_mkdir);

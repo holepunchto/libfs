@@ -16,12 +16,12 @@ uv_buf_t buf;
 bool read_called = false;
 
 void
-on_close (fs_close_t *req, int status) {
+on_close(fs_close_t *req, int status) {
   assert(status == 0);
 }
 
 void
-on_read (fs_read_t *req, int status, size_t len) {
+on_read(fs_read_t *req, int status, size_t len) {
   assert(status == 0);
   assert(len >= 12);
   assert(memcmp(buf.base, "hello world", 11) == 0);
@@ -33,7 +33,7 @@ on_read (fs_read_t *req, int status, size_t len) {
 }
 
 void
-on_open (fs_open_t *req, int status, uv_file file) {
+on_open(fs_open_t *req, int status, uv_file file) {
   assert(status == 0);
 
   int e = fs_read(loop, &read_req, file, &buf, 1, 0, on_read);
@@ -41,7 +41,7 @@ on_open (fs_open_t *req, int status, uv_file file) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   buf = uv_buf_init(malloc(12), 12);

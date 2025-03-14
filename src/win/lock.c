@@ -6,7 +6,7 @@
 #include "../platform.h"
 
 int
-fs__lock (uv_file file, int64_t offset, size_t length, bool shared) {
+fs__lock(uv_file file, int64_t offset, size_t length, bool shared) {
   HANDLE handle = uv_get_osfhandle(file);
 
   if (length == 0) length = SIZE_MAX;
@@ -34,7 +34,7 @@ fs__lock (uv_file file, int64_t offset, size_t length, bool shared) {
 }
 
 int
-fs__downgrade_lock (uv_file file, int64_t offset, size_t length) {
+fs__downgrade_lock(uv_file file, int64_t offset, size_t length) {
   int res = fs__lock(file, offset, length, true);
   if (res < 0) return res;
 
@@ -42,7 +42,7 @@ fs__downgrade_lock (uv_file file, int64_t offset, size_t length) {
 }
 
 int
-fs__upgrade_lock (uv_file file, int64_t offset, size_t length) {
+fs__upgrade_lock(uv_file file, int64_t offset, size_t length) {
   int res = fs__unlock(file, offset, length);
   if (res < 0) return res;
 

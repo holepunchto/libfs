@@ -6,14 +6,14 @@
 #include "platform.h"
 
 static void
-fs__swap_work (uv_work_t *req) {
+fs__swap_work(uv_work_t *req) {
   fs_swap_t *r = (fs_swap_t *) req->data;
 
   r->result = fs__swap(r->from, r->to);
 }
 
 static void
-fs__swap_after_work (uv_work_t *req, int status) {
+fs__swap_after_work(uv_work_t *req, int status) {
   fs_swap_t *r = (fs_swap_t *) req->data;
 
   free(r->from);
@@ -23,7 +23,7 @@ fs__swap_after_work (uv_work_t *req, int status) {
 }
 
 int
-fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb) {
+fs_swap(uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb) {
   req->from = strdup(from);
   req->to = strdup(to);
   req->cb = cb;

@@ -350,97 +350,100 @@ struct fs_merge_s {
 };
 
 int
-fs_open (uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb);
+fs_open(uv_loop_t *loop, fs_open_t *req, const char *path, int flags, int mode, fs_open_cb cb);
 
 int
-fs_access (uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb);
+fs_access(uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb);
 
 int
-fs_close (uv_loop_t *loop, fs_close_t *req, uv_file file, fs_close_cb cb);
+fs_close(uv_loop_t *loop, fs_close_t *req, uv_file file, fs_close_cb cb);
 
 int
-fs_read (uv_loop_t *loop, fs_read_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_read_cb cb);
+fs_read(uv_loop_t *loop, fs_read_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_read_cb cb);
 
 int
-fs_read_batch (uv_loop_t *loop, fs_read_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_read_batch_cb cb);
+fs_read_batch(uv_loop_t *loop, fs_read_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_read_batch_cb cb);
 
 int
-fs_write (uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_write_cb cb);
+fs_write(uv_loop_t *loop, fs_write_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, int64_t offset, fs_write_cb cb);
 
 int
-fs_write_batch (uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb);
+fs_write_batch(uv_loop_t *loop, fs_write_batch_t *req, uv_file file, const uv_buf_t bufs[], size_t bufs_len, const int64_t offsets[], fs_write_batch_cb cb);
 
 int
-fs_stat (uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb);
+fs_stat(uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb);
 
 int
-fs_truncate (uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb);
+fs_truncate(uv_loop_t *loop, fs_truncate_t *req, uv_file file, int64_t offset, fs_truncate_cb cb);
 
 int
-fs_trim (uv_loop_t *loop, fs_trim_t *req, uv_file file, int64_t offset, size_t length, fs_trim_cb cb);
+fs_trim(uv_loop_t *loop, fs_trim_t *req, uv_file file, int64_t offset, size_t length, fs_trim_cb cb);
 
 int
-fs_sparse (uv_loop_t *loop, fs_sparse_t *req, uv_file file, fs_sparse_cb cb);
+fs_sparse(uv_loop_t *loop, fs_sparse_t *req, uv_file file, fs_sparse_cb cb);
 
 int
-fs_chmod (uv_loop_t *loop, fs_chmod_t *req, uv_file file, int mode, fs_chmod_cb cb);
+fs_chmod(uv_loop_t *loop, fs_chmod_t *req, uv_file file, int mode, fs_chmod_cb cb);
 
 int
-fs_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, bool shared, fs_lock_cb cb);
+fs_lock(uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, bool shared, fs_lock_cb cb);
 
 int
-fs_try_lock (uv_file file, int64_t offset, size_t length, bool shared);
+fs_try_lock(uv_file file, int64_t offset, size_t length, bool shared);
 
 int
-fs_downgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
+fs_downgrade_lock(uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
 
 int
-fs_try_downgrade_lock (uv_file file, int64_t offset, size_t length);
+fs_try_downgrade_lock(uv_file file, int64_t offset, size_t length);
 
 int
-fs_upgrade_lock (uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
+fs_upgrade_lock(uv_loop_t *loop, fs_lock_t *req, uv_file file, int64_t offset, size_t length, fs_lock_cb cb);
 
 int
-fs_try_upgrade_lock (uv_file file, int64_t offset, size_t length);
+fs_try_upgrade_lock(uv_file file, int64_t offset, size_t length);
 
 int
-fs_unlock (uv_file file, int64_t offset, size_t length);
+fs_unlock(uv_file file, int64_t offset, size_t length);
 
 int
-fs_get_attr (uv_loop_t *loop, fs_get_attr_t *req, uv_file file, const char *name, fs_get_attr_cb cb);
+fs_get_attr(uv_loop_t *loop, fs_get_attr_t *req, uv_file file, const char *name, fs_get_attr_cb cb);
 
 int
-fs_set_attr (uv_loop_t *loop, fs_set_attr_t *req, uv_file file, const char *name, const uv_buf_t *value, fs_set_attr_cb cb);
+fs_set_attr(uv_loop_t *loop, fs_set_attr_t *req, uv_file file, const char *name, const uv_buf_t *value, fs_set_attr_cb cb);
 
 int
-fs_remove_attr (uv_loop_t *loop, fs_remove_attr_t *req, uv_file file, const char *name, fs_remove_attr_cb cb);
+fs_remove_attr(uv_loop_t *loop, fs_remove_attr_t *req, uv_file file, const char *name, fs_remove_attr_cb cb);
 
 int
-fs_list_attrs (uv_loop_t *loop, fs_list_attrs_t *req, uv_file file, fs_list_attrs_cb cb);
+fs_list_attrs(uv_loop_t *loop, fs_list_attrs_t *req, uv_file file, fs_list_attrs_cb cb);
 
 int
-fs_realpath (uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
+fs_realpath(uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
 
 int
-fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
+fs_realpath(uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
 
 int
-fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb);
+fs_mkdir(uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
 
 int
-fs_symlink (uv_loop_t *loop, fs_symlink_t *req, const char *target, const char *link, int flags, fs_symlink_cb);
+fs_rmdir(uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb);
 
 int
-fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
+fs_symlink(uv_loop_t *loop, fs_symlink_t *req, const char *target, const char *link, int flags, fs_symlink_cb);
 
 int
-fs_rename (uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb);
+fs_unlink(uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
 
 int
-fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+fs_rename(uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb);
 
 int
-fs_merge (uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb);
+fs_swap(uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+
+int
+fs_merge(uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb);
 
 #ifdef __cplusplus
 }

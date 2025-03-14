@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_access (uv_fs_t *req) {
+on_access(uv_fs_t *req) {
   fs_access_t *access_req = (fs_access_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_access (uv_fs_t *req) {
 }
 
 int
-fs_access (uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb) {
+fs_access(uv_loop_t *loop, fs_access_t *req, const char *path, int mode, fs_access_cb cb) {
   req->mode = mode;
   req->cb = cb;
   req->req.data = (void *) req;

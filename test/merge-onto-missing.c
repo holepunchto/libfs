@@ -13,13 +13,13 @@ fs_merge_t merge_req;
 bool merge_called = false;
 
 void
-on_mkdir (fs_mkdir_t *req, int status);
+on_mkdir(fs_mkdir_t *req, int status);
 
 void
-on_merge (fs_merge_t *req, int status);
+on_merge(fs_merge_t *req, int status);
 
 void
-generate_directories () {
+generate_directories() {
   int err;
 
   static char *directories[] = {
@@ -45,21 +45,21 @@ generate_directories () {
 }
 
 void
-on_mkdir (fs_mkdir_t *req, int status) {
+on_mkdir(fs_mkdir_t *req, int status) {
   assert(status == 0);
 
   generate_directories();
 }
 
 void
-on_merge (fs_merge_t *req, int status) {
+on_merge(fs_merge_t *req, int status) {
   assert(status == 0);
 
   merge_called = true;
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   generate_directories();

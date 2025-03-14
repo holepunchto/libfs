@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_stat (uv_fs_t *req) {
+on_stat(uv_fs_t *req) {
   fs_stat_t *stat_req = (fs_stat_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_stat (uv_fs_t *req) {
 }
 
 int
-fs_stat (uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb) {
+fs_stat(uv_loop_t *loop, fs_stat_t *req, uv_file file, fs_stat_cb cb) {
   req->file = file;
   req->cb = cb;
   req->req.data = (void *) req;

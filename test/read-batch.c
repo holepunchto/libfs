@@ -18,12 +18,12 @@ int64_t offsets[2];
 bool read_called = false;
 
 void
-on_close (fs_close_t *req, int status) {
+on_close(fs_close_t *req, int status) {
   assert(status == 0);
 }
 
 void
-on_read (fs_read_batch_t *req, int status, size_t len) {
+on_read(fs_read_batch_t *req, int status, size_t len) {
   assert(status == 0);
   assert(len == 6);
   assert(memcmp(bufs[0].base, "hel", 3) == 0);
@@ -36,7 +36,7 @@ on_read (fs_read_batch_t *req, int status, size_t len) {
 }
 
 void
-on_open (fs_open_t *req, int status, uv_file file) {
+on_open(fs_open_t *req, int status, uv_file file) {
   assert(status == 0);
 
   int e = fs_read_batch(loop, &read_req, file, bufs, 2, offsets, on_read);
@@ -44,7 +44,7 @@ on_open (fs_open_t *req, int status, uv_file file) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   bufs[0] = uv_buf_init(malloc(3), 3);

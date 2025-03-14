@@ -3,7 +3,7 @@
 #include "../include/fs.h"
 
 static void
-on_chmod (uv_fs_t *req) {
+on_chmod(uv_fs_t *req) {
   fs_chmod_t *chmod_req = (fs_chmod_t *) req->data;
 
   int status = req->result;
@@ -18,7 +18,7 @@ on_chmod (uv_fs_t *req) {
 }
 
 int
-fs_chmod (uv_loop_t *loop, fs_chmod_t *req, uv_file file, int mode, fs_chmod_cb cb) {
+fs_chmod(uv_loop_t *loop, fs_chmod_t *req, uv_file file, int mode, fs_chmod_cb cb) {
   req->mode = mode;
   req->cb = cb;
   req->req.data = (void *) req;

@@ -6,7 +6,7 @@
 #include "../platform.h"
 
 int
-fs__trim (uv_file file, int64_t offset, size_t length) {
+fs__trim(uv_file file, int64_t offset, size_t length) {
   HANDLE handle = uv_get_osfhandle(file);
 
   FILE_ZERO_DATA_INFORMATION data = {

@@ -22,17 +22,17 @@ struct fs_merge_step_s {
 };
 
 static void
-on_rmdir (uv_fs_t *req);
+on_rmdir(uv_fs_t *req);
 
 static void
-on_finished (fs_merge_t *req) {
+on_finished(fs_merge_t *req) {
   uv_fs_req_cleanup(&req->req);
 
   if (req->cb) req->cb(req, req->result);
 }
 
 static void
-on_finished_maybe (uv_fs_t *uv_req, fs_merge_step_t *rec, int err) {
+on_finished_maybe(uv_fs_t *uv_req, fs_merge_step_t *rec, int err) {
   uv_fs_req_cleanup(uv_req);
 
   fs_merge_step_t *parent = rec->parent;
@@ -65,7 +65,7 @@ on_finished_maybe (uv_fs_t *uv_req, fs_merge_step_t *rec, int err) {
 }
 
 static void
-on_rmdir (uv_fs_t *req) {
+on_rmdir(uv_fs_t *req) {
   fs_merge_step_t *rec = (fs_merge_step_t *) req->data;
 
   int err = req->result;
@@ -74,7 +74,7 @@ on_rmdir (uv_fs_t *req) {
 }
 
 static void
-on_rename (uv_fs_t *req) {
+on_rename(uv_fs_t *req) {
   fs_merge_step_t *rec = (fs_merge_step_t *) req->data;
 
   int err = req->result;
@@ -83,13 +83,13 @@ on_rename (uv_fs_t *req) {
 }
 
 static void
-on_stat_file (uv_fs_t *req);
+on_stat_file(uv_fs_t *req);
 
 static void
-on_stat_dir (uv_fs_t *req);
+on_stat_dir(uv_fs_t *req);
 
 static void
-on_scandir (uv_fs_t *req) {
+on_scandir(uv_fs_t *req) {
   fs_merge_step_t *rec = (fs_merge_step_t *) req->data;
 
   ssize_t len = req->result;
@@ -122,7 +122,7 @@ on_scandir (uv_fs_t *req) {
     path_len = 4097;
 
     err = path_join(
-      (const char *[]){rec->base, entry.name, NULL},
+      (const char *[]) {rec->base, entry.name, NULL},
       base,
       &path_len,
       path_behavior_system
@@ -133,7 +133,7 @@ on_scandir (uv_fs_t *req) {
     path_len = 4097;
 
     err = path_join(
-      (const char *[]){rec->onto, entry.name, NULL},
+      (const char *[]) {rec->onto, entry.name, NULL},
       onto,
       &path_len,
       path_behavior_system
@@ -163,7 +163,7 @@ on_scandir (uv_fs_t *req) {
 }
 
 static void
-on_stat_file (uv_fs_t *req) {
+on_stat_file(uv_fs_t *req) {
   fs_merge_step_t *rec = (fs_merge_step_t *) req->data;
 
   int err = req->result;
@@ -197,7 +197,7 @@ on_stat_file (uv_fs_t *req) {
 }
 
 static void
-on_stat_dir (uv_fs_t *req) {
+on_stat_dir(uv_fs_t *req) {
   fs_merge_step_t *rec = (fs_merge_step_t *) req->data;
 
   int err = req->result;
@@ -228,7 +228,7 @@ on_stat_dir (uv_fs_t *req) {
 }
 
 int
-fs_merge (uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb) {
+fs_merge(uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb) {
   req->cb = cb;
   req->replace = replace;
   req->result = 0;

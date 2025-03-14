@@ -10,22 +10,22 @@
 #include "../platform.h"
 
 static inline size_t
-fs__align_up (size_t n, size_t align) {
+fs__align_up(size_t n, size_t align) {
   return (n + (align - 1)) & -align;
 }
 
 static inline size_t
-fs__align_down (size_t n, size_t align) {
+fs__align_down(size_t n, size_t align) {
   return n & -align;
 }
 
 static inline size_t
-fs__min (size_t a, size_t b) {
+fs__min(size_t a, size_t b) {
   return a < b ? a : b;
 }
 
 int
-fs__trim (uv_file file, int64_t offset, size_t length) {
+fs__trim(uv_file file, int64_t offset, size_t length) {
   struct stat st;
 
   int res = fstat(file, &st);
