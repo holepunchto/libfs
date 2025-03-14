@@ -22,6 +22,7 @@ target_sources(
     include/fs.h
   PRIVATE
     src/access.c
+    src/attr.c
     src/chmod.c
     src/close.c
     src/lock.c
@@ -60,6 +61,7 @@ if(APPLE)
   target_sources(
     fs
     PRIVATE
+      src/mac/attr.c
       src/mac/lock.c
       src/mac/swap.c
       src/mac/trim.c
@@ -72,6 +74,7 @@ if(CMAKE_SYSTEM_NAME MATCHES "Linux")
   target_sources(
     fs
     PRIVATE
+      src/linux/attr.c
       src/linux/lock.c
       src/linux/swap.c
       src/linux/trim.c
@@ -84,7 +87,9 @@ if(WIN32)
   target_sources(
     fs
     PRIVATE
+      src/win/attr.c
       src/win/lock.c
+      src/win/nt.h
       src/win/sparse.c
       src/win/swap.c
       src/win/trim.c
@@ -120,6 +125,14 @@ target_link_libraries(
     path_shared
 )
 
+if(WIN32)
+  target_link_libraries(
+    fs_shared
+    PUBLIC
+      ntdll
+  )
+endif()
+
 add_library(fs_static STATIC)
 
 set_target_properties(
@@ -137,6 +150,14 @@ target_link_libraries(
   PRIVATE
     path_static
 )
+
+if(WIN32)
+  target_link_libraries(
+    fs_static
+    PUBLIC
+      ntdll
+  )
+endif()
 
 install(TARGETS fs_shared fs_static)
 

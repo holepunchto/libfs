@@ -1,4 +1,6 @@
 list(APPEND tests
+  attr-get
+  attr-list
   merge
   merge-onto-missing
   mkdir-rmdir
