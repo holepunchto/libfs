@@ -40,7 +40,7 @@ fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
   );
 
   if (res < 0) {
-    if (res == STATUS_OBJECT_NAME_NOT_FOUND) return UV_ENOENT;
+    if (res == STATUS_OBJECT_NAME_NOT_FOUND) return UV_ENODATA;
 
     return UV_EIO;
   }
@@ -188,7 +188,11 @@ fs__remove_attr(uv_file file, const char *name) {
     0
   );
 
-  if (res < 0) return UV_EIO;
+  if (res < 0) {
+    if (res == STATUS_OBJECT_NAME_NOT_FOUND) return UV_ENODATA;
+
+    return UV_EIO;
+  }
 
   res = NtDeleteFile(&object_attributes);
 
