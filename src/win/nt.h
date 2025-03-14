@@ -208,6 +208,11 @@ NtWriteFile(
 );
 
 __kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
+NtDeleteFile(
+  IN POBJECT_ATTRIBUTES ObjectAttributes
+);
+
+__kernel_entry NTSYSCALLAPI NTSTATUS NTAPI
 NtQueryInformationFile(
   IN HANDLE FileHandle,
   OUT PIO_STATUS_BLOCK IoStatusBlock,

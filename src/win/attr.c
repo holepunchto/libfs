@@ -151,8 +151,47 @@ fs__set_attr(uv_file file, const char *name, const uv_buf_t *value) {
 int
 fs__remove_attr(uv_file file, const char *name) {
   HANDLE handle = uv_get_osfhandle(file);
+  HANDLE stream_handle;
 
-  return UV_ENOSYS;
+  size_t len = strlen(name);
+
+  WCHAR unicode_name[MAX_PATH] = L":";
+  MultiByteToWideChar(CP_OEMCP, 0, name, -1, &unicode_name[1], len + 1);
+
+  len = wcslen(unicode_name) * 2;
+
+  UNICODE_STRING object_name = {
+    .Length = len,
+    .MaximumLength = len + 2,
+    .Buffer = unicode_name,
+  };
+
+  OBJECT_ATTRIBUTES object_attributes = {
+    .Length = sizeof(object_attributes),
+    .RootDirectory = handle,
+    .ObjectName = &object_name,
+  };
+
+  IO_STATUS_BLOCK status;
+
+  NTSTATUS res = NtOpenFile(
+    &stream_handle,
+    DELETE,
+    &object_attributes,
+    &status,
+    FILE_SHARE_READ,
+    0
+  );
+
+  if (res < 0) return -1;
+
+  res = NtDeleteFile(&object_attributes);
+
+  NtClose(stream_handle);
+
+  if (res < 0) return -1;
+
+  return 0;
 }
 
 int
