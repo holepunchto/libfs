@@ -4,8 +4,8 @@ A simple but extensive file system library built on libuv.
 
 ## API
 
-See [`includes/fs.h`](include/fs.h) for the public API.
+See [`include/fs.h`](include/fs.h) for the public API.
 
 ## License
 
-ISC
+Apache-2.0

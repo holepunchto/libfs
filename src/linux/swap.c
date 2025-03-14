@@ -1,8 +1,8 @@
 #define _GNU_SOURCE
 
 #include <errno.h>
-#include <fcntl.h>
 #include <sys/syscall.h>
+#include <unistd.h>
 #include <uv.h>
 
 #include "../../include/fs.h"

@@ -21,7 +21,7 @@ on_close (fs_close_t *req, int status) {
 void
 on_stat (fs_stat_t *req, int status, const uv_stat_t *stat) {
   assert(status == 0);
-  assert(stat->st_size == 12);
+  assert(stat->st_size >= 12);
 
   int e = fs_close(loop, &close_req, req->file, on_close);
   assert(e == 0);

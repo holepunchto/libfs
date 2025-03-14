@@ -27,18 +27,22 @@ typedef struct fs_get_attr_s fs_get_attr_t;
 typedef struct fs_set_attr_s fs_set_attr_t;
 typedef struct fs_remove_attr_s fs_remove_attr_t;
 typedef struct fs_list_attrs_s fs_list_attrs_t;
+typedef struct fs_realpath_s fs_realpath_t;
 typedef struct fs_mkdir_s fs_mkdir_t;
 typedef struct fs_rmdir_s fs_rmdir_t;
+typedef struct fs_symlink_s fs_symlink_t;
 typedef struct fs_unlink_s fs_unlink_t;
+typedef struct fs_rename_s fs_rename_t;
 typedef struct fs_swap_s fs_swap_t;
+typedef struct fs_merge_s fs_merge_t;
 
 typedef void (*fs_open_cb)(fs_open_t *req, int status, uv_file file);
 typedef void (*fs_access_cb)(fs_access_t *req, int status);
 typedef void (*fs_close_cb)(fs_close_t *req, int status);
-typedef void (*fs_read_cb)(fs_read_t *req, int status, ssize_t len);
-typedef void (*fs_read_batch_cb)(fs_read_batch_t *req, int status, ssize_t len);
-typedef void (*fs_write_cb)(fs_write_t *req, int status, ssize_t len);
-typedef void (*fs_write_batch_cb)(fs_write_batch_t *req, int status, ssize_t len);
+typedef void (*fs_read_cb)(fs_read_t *req, int status, size_t len);
+typedef void (*fs_read_batch_cb)(fs_read_batch_t *req, int status, size_t len);
+typedef void (*fs_write_cb)(fs_write_t *req, int status, size_t len);
+typedef void (*fs_write_batch_cb)(fs_write_batch_t *req, int status, size_t len);
 typedef void (*fs_stat_cb)(fs_stat_t *req, int status, const uv_stat_t *stat);
 typedef void (*fs_truncate_cb)(fs_truncate_t *req, int status);
 typedef void (*fs_trim_cb)(fs_trim_t *req, int status);
@@ -49,14 +53,20 @@ typedef void (*fs_get_attr_cb)(fs_get_attr_t *req, int status, const uv_buf_t *v
 typedef void (*fs_set_attr_cb)(fs_set_attr_t *req, int status);
 typedef void (*fs_remove_attr_cb)(fs_remove_attr_t *req, int status);
 typedef void (*fs_list_attrs_cb)(fs_list_attrs_t *req, int status, const char *attrs[], ssize_t len);
+typedef void (*fs_realpath_cb)(fs_realpath_t *req, int status, const char *path);
 typedef void (*fs_mkdir_cb)(fs_mkdir_t *req, int status);
 typedef void (*fs_rmdir_cb)(fs_rmdir_t *req, int status);
+typedef void (*fs_symlink_cb)(fs_symlink_t *req, int status);
 typedef void (*fs_unlink_cb)(fs_unlink_t *req, int status);
+typedef void (*fs_rename_cb)(fs_rename_t *req, int status);
 typedef void (*fs_swap_cb)(fs_swap_t *req, int status);
+typedef void (*fs_merge_cb)(fs_merge_t *req, int status);
 
 struct fs_open_s {
   uv_fs_t req;
-  const char *path;
+
+  int flags;
+  int mode;
 
   fs_open_cb cb;
 
@@ -65,7 +75,7 @@ struct fs_open_s {
 
 struct fs_access_s {
   uv_fs_t req;
-  const char *path;
+
   int mode;
 
   fs_access_cb cb;
@@ -256,9 +266,17 @@ struct fs_list_attrs_s {
   void *data;
 };
 
+struct fs_realpath_s {
+  uv_fs_t req;
+
+  fs_realpath_cb cb;
+
+  void *data;
+};
+
 struct fs_mkdir_s {
   uv_fs_t req;
-  const char *path;
+  char *path;
 
   int mode;
 
@@ -269,20 +287,39 @@ struct fs_mkdir_s {
 
 struct fs_rmdir_s {
   uv_fs_t req;
-  const char *path;
+  char *path;
 
   int mode;
 
   fs_rmdir_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_symlink_s {
+  uv_fs_t req;
+
+  int flags;
+
+  fs_symlink_cb cb;
 
   void *data;
 };
 
 struct fs_unlink_s {
   uv_fs_t req;
-  const char *path;
 
   fs_unlink_cb cb;
+
+  void *data;
+};
+
+struct fs_rename_s {
+  uv_fs_t req;
+
+  fs_rename_cb cb;
 
   void *data;
 };
@@ -290,10 +327,22 @@ struct fs_unlink_s {
 struct fs_swap_s {
   uv_work_t req;
 
-  const char *from;
-  const char *to;
+  char *from;
+  char *to;
 
   fs_swap_cb cb;
+
+  int result;
+
+  void *data;
+};
+
+struct fs_merge_s {
+  uv_fs_t req;
+
+  bool replace;
+
+  fs_merge_cb cb;
 
   int result;
 
@@ -370,16 +419,28 @@ int
 fs_list_attrs (uv_loop_t *loop, fs_list_attrs_t *req, uv_file file, fs_list_attrs_cb cb);
 
 int
+fs_realpath (uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
+
+int
 fs_mkdir (uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
 
 int
 fs_rmdir (uv_loop_t *loop, fs_rmdir_t *req, const char *path, bool recursive, fs_rmdir_cb cb);
 
 int
+fs_symlink (uv_loop_t *loop, fs_symlink_t *req, const char *target, const char *link, int flags, fs_symlink_cb);
+
+int
 fs_unlink (uv_loop_t *loop, fs_unlink_t *req, const char *path, fs_unlink_cb cb);
 
 int
+fs_rename (uv_loop_t *loop, fs_rename_t *req, const char *from, const char *to, fs_rename_cb cb);
+
+int
 fs_swap (uv_loop_t *loop, fs_swap_t *req, const char *from, const char *to, fs_swap_cb cb);
+
+int
+fs_merge (uv_loop_t *loop, fs_merge_t *req, const char *base, const char *onto, bool replace, fs_merge_cb cb);
 
 #ifdef __cplusplus
 }

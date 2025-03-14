@@ -20,7 +20,7 @@ fs__try_lock (uv_file file, int64_t offset, size_t length, bool shared) {
     .l_whence = SEEK_SET,
   };
 
-  int res = fcntl(fd, F_OFD_SETLK, &data);
+  int res = fcntl(file, F_OFD_SETLK, &data);
 
   return res == -1 ? uv_translate_sys_error(errno) : res;
 }

@@ -1,14 +1,11 @@
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.25)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
-
-if (WIN32)
-  set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
-endif()
+find_package(cmake-fetch REQUIRED PATHS node_modules/cmake-fetch)
 
 project(fs C)
 
-add_subdirectory(vendor/libuv EXCLUDE_FROM_ALL)
+fetch_package("github:libuv/libuv@1.48.0")
+fetch_package("github:holepunchto/libpath")
 
 add_library(fs OBJECT)
 
@@ -16,7 +13,7 @@ set_target_properties(
   fs
   PROPERTIES
   C_STANDARD 99
-  POSITION_INDEPENDENT_CODE 1
+  POSITION_INDEPENDENT_CODE ON
 )
 
 target_sources(
@@ -29,15 +26,19 @@ target_sources(
     src/chmod.c
     src/close.c
     src/lock.c
+    src/merge.c
     src/mkdir.c
     src/open.c
     src/platform.h
     src/read.c
     src/read-batch.c
+    src/realpath.c
+    src/rename.c
     src/rmdir.c
     src/sparse.c
     src/stat.c
     src/swap.c
+    src/symlink.c
     src/trim.c
     src/truncate.c
     src/try-lock.c
@@ -101,21 +102,27 @@ target_include_directories(
   fs
   PUBLIC
     include
-    $<TARGET_PROPERTY:uv,INCLUDE_DIRECTORIES>
+    $<TARGET_PROPERTY:uv,INTERFACE_INCLUDE_DIRECTORIES>
+  PRIVATE
+    $<TARGET_PROPERTY:path,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
-add_library(fs_shared SHARED $<TARGET_OBJECTS:fs>)
+add_library(fs_shared SHARED)
 
 set_target_properties(
   fs_shared
   PROPERTIES
   OUTPUT_NAME fs
+  WINDOWS_EXPORT_ALL_SYMBOLS ON
 )
 
 target_link_libraries(
   fs_shared
   PUBLIC
+    fs
     uv
+  PRIVATE
+    path_shared
 )
 
 if(WIN32)
@@ -126,18 +133,22 @@ if(WIN32)
   )
 endif()
 
-add_library(fs_static STATIC $<TARGET_OBJECTS:fs>)
+add_library(fs_static STATIC)
 
 set_target_properties(
   fs_static
   PROPERTIES
   OUTPUT_NAME fs
+  PREFIX lib
 )
 
 target_link_libraries(
   fs_static
   PUBLIC
-    uv
+    fs
+    uv_a
+  PRIVATE
+    path_static
 )
 
 if(WIN32)
@@ -154,5 +165,6 @@ install(FILES include/fs.h DESTINATION include)
 
 if(PROJECT_IS_TOP_LEVEL)
   enable_testing()
+
   add_subdirectory(test)
 endif()

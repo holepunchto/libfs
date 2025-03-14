@@ -36,7 +36,7 @@ fs__swap (const char *from, const char *to) {
   int err = fs__temp_path(swap);
   if (err < 0) return err;
 
-  err = fs__move(to, from);
+  err = fs__move(to, swap);
   if (err < 0) return err;
 
   err = fs__move(from, to);
