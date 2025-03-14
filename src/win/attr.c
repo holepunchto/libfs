@@ -179,7 +179,7 @@ fs__remove_attr(uv_file file, const char *name) {
     DELETE,
     &object_attributes,
     &status,
-    FILE_SHARE_READ,
+    FILE_SHARE_DELETE,
     0
   );
 
