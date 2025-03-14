@@ -422,9 +422,6 @@ int
 fs_realpath(uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
 
 int
-fs_realpath(uv_loop_t *loop, fs_realpath_t *req, const char *path, fs_realpath_cb cb);
-
-int
 fs_mkdir(uv_loop_t *loop, fs_mkdir_t *req, const char *path, int mode, bool recursive, fs_mkdir_cb cb);
 
 int
