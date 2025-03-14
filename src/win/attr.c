@@ -5,7 +5,7 @@
 #include "nt.h"
 
 int
-fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
+fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
   HANDLE handle = uv_get_osfhandle(file);
   HANDLE stream_handle;
 
@@ -84,7 +84,7 @@ fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
 }
 
 int
-fs__set_attr (uv_file file, const char *name, const uv_buf_t *value) {
+fs__set_attr(uv_file file, const char *name, const uv_buf_t *value) {
   HANDLE handle = uv_get_osfhandle(file);
   HANDLE stream_handle;
 
@@ -149,14 +149,14 @@ fs__set_attr (uv_file file, const char *name, const uv_buf_t *value) {
 }
 
 int
-fs__remove_attr (uv_file file, const char *name) {
+fs__remove_attr(uv_file file, const char *name) {
   HANDLE handle = uv_get_osfhandle(file);
 
   return UV_ENOSYS;
 }
 
 int
-fs__list_attrs (uv_file file, char **names, size_t *length) {
+fs__list_attrs(uv_file file, char **names, size_t *length) {
   HANDLE handle = uv_get_osfhandle(file);
 
   size_t info_size = 64;

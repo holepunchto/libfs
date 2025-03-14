@@ -8,7 +8,7 @@
 #include "../platform.h"
 
 int
-fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
+fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
   int res = fgetxattr(file, name, NULL, 0, 0, 0);
 
   if (res == -1) return uv_translate_sys_error(errno);
@@ -21,21 +21,21 @@ fs__get_attr (uv_file file, const char *name, uv_buf_t *value) {
 }
 
 int
-fs__set_attr (uv_file file, const char *name, const uv_buf_t *value) {
+fs__set_attr(uv_file file, const char *name, const uv_buf_t *value) {
   int res = fsetxattr(file, name, value->base, value->len, 0, 0);
 
   return res == -1 ? uv_translate_sys_error(errno) : 0;
 }
 
 int
-fs__remove_attr (uv_file file, const char *name) {
+fs__remove_attr(uv_file file, const char *name) {
   int res = fremovexattr(file, name, 0);
 
   return res == -1 ? uv_translate_sys_error(errno) : 0;
 }
 
 int
-fs__list_attrs (uv_file file, char **names, size_t *length) {
+fs__list_attrs(uv_file file, char **names, size_t *length) {
   int res = flistxattr(file, NULL, 0, 0);
 
   if (res == -1) return uv_translate_sys_error(errno);
