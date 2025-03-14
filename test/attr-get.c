@@ -17,7 +17,7 @@ uv_file file;
 bool get_called = false;
 
 void
-on_get (fs_get_attr_t *req, int status, const uv_buf_t *value) {
+on_get(fs_get_attr_t *req, int status, const uv_buf_t *value) {
   assert(status == 0);
 
   get_called = true;
@@ -27,7 +27,7 @@ on_get (fs_get_attr_t *req, int status, const uv_buf_t *value) {
 }
 
 void
-on_set (fs_set_attr_t *req, int status) {
+on_set(fs_set_attr_t *req, int status) {
   assert(status == 0);
 
   int e = fs_get_attr(loop, &get_req, file, "test", on_get);
@@ -35,7 +35,7 @@ on_set (fs_set_attr_t *req, int status) {
 }
 
 void
-on_open (fs_open_t *req, int status, uv_file fd) {
+on_open(fs_open_t *req, int status, uv_file fd) {
   assert(status == 0);
 
   buf.base = "hello world";
@@ -48,7 +48,7 @@ on_open (fs_open_t *req, int status, uv_file fd) {
 }
 
 int
-main () {
+main() {
   loop = uv_default_loop();
 
   int e = fs_open(loop, &open_req, "test/fixtures/read.txt", O_RDWR, 0, on_open);
