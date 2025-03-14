@@ -39,7 +39,11 @@ fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
     0
   );
 
-  if (res < 0) return -1;
+  if (res < 0) {
+    if (res == STATUS_OBJECT_NAME_NOT_FOUND) return UV_ENOENT;
+
+    return UV_EIO;
+  }
 
   FILE_STANDARD_INFORMATION info;
 
@@ -53,7 +57,8 @@ fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
 
   if (res < 0) {
     NtClose(stream_handle);
-    return -1;
+
+    return UV_EIO;
   }
 
   size_t length = info.EndOfFile.QuadPart;
@@ -78,7 +83,7 @@ fs__get_attr(uv_file file, const char *name, uv_buf_t *value) {
 
   NtClose(stream_handle);
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   return 0;
 }
@@ -123,7 +128,7 @@ fs__set_attr(uv_file file, const char *name, const uv_buf_t *value) {
     0
   );
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   LARGE_INTEGER offset = {
     .QuadPart = 0,
@@ -143,7 +148,7 @@ fs__set_attr(uv_file file, const char *name, const uv_buf_t *value) {
 
   NtClose(stream_handle);
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   return 0;
 }
@@ -183,13 +188,13 @@ fs__remove_attr(uv_file file, const char *name) {
     0
   );
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   res = NtDeleteFile(&object_attributes);
 
   NtClose(stream_handle);
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   return 0;
 }
@@ -224,7 +229,7 @@ fs__list_attrs(uv_file file, char **names, size_t *length) {
     }
   } while (true);
 
-  if (res < 0) return -1;
+  if (res < 0) return UV_EIO;
 
   PFILE_STREAM_INFORMATION next = info;
 
