@@ -15,9 +15,11 @@ static void
 fs__get_attr_after_work(uv_work_t *req, int status) {
   fs_get_attr_t *r = (fs_get_attr_t *) req->data;
 
-  if (r->cb) r->cb(r, r->result, &r->value);
+  uv_buf_t value = r->value;
 
-  free(r->value.base);
+  if (r->cb) r->cb(r, r->result, &value);
+
+  free(value.base);
 }
 
 int
@@ -92,9 +94,11 @@ static void
 fs__list_attrs_after_work(uv_work_t *req, int status) {
   fs_list_attrs_t *r = (fs_list_attrs_t *) req->data;
 
-  if (r->cb) r->cb(r, r->result, (const char **) r->names, r->length);
+  char *names = r->names;
 
-  free(r->names);
+  if (r->cb) r->cb(r, r->result, (const char **) names, r->length);
+
+  free(names);
 }
 
 int
