@@ -23,7 +23,7 @@ on_list(fs_list_attrs_t *req, int status, const char *names[], ssize_t length) {
   list_called = true;
 
   assert(length == 1);
-  assert(strcmp(names[0], "test") == 0);
+  assert(strcmp(names[0], "user.test") == 0);
 }
 
 void
@@ -43,7 +43,7 @@ on_open(fs_open_t *req, int status, uv_file fd) {
 
   file = fd;
 
-  int e = fs_set_attr(loop, &set_req, file, "test", &buf, on_set);
+  int e = fs_set_attr(loop, &set_req, file, "user.test", &buf, on_set);
   assert(e == 0);
 }
 

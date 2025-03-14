@@ -30,7 +30,7 @@ void
 on_set(fs_set_attr_t *req, int status) {
   assert(status == 0);
 
-  int e = fs_get_attr(loop, &get_req, file, "test", on_get);
+  int e = fs_get_attr(loop, &get_req, file, "user.test", on_get);
   assert(e == 0);
 }
 
@@ -43,7 +43,7 @@ on_open(fs_open_t *req, int status, uv_file fd) {
 
   file = fd;
 
-  int e = fs_set_attr(loop, &set_req, file, "test", &buf, on_set);
+  int e = fs_set_attr(loop, &set_req, file, "user.test", &buf, on_set);
   assert(e == 0);
 }
 
