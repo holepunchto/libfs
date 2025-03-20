@@ -230,7 +230,7 @@ struct fs_set_attr_s {
   uv_file file;
 
   const char *name;
-  const uv_buf_t *value;
+  uv_buf_t value;
 
   fs_set_attr_cb cb;
 
