@@ -70,7 +70,7 @@ if(APPLE)
   )
 endif()
 
-if(CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(LINUX)
   target_sources(
     fs
     PRIVATE
@@ -95,6 +95,12 @@ if(WIN32)
       src/win/trim.c
       src/win/try-lock.c
       src/win/unlock.c
+  )
+
+  target_link_libraries(
+    fs
+    PUBLIC
+      ntdll
   )
 endif()
 
@@ -125,14 +131,6 @@ target_link_libraries(
     path_shared
 )
 
-if(WIN32)
-  target_link_libraries(
-    fs_shared
-    PUBLIC
-      ntdll
-  )
-endif()
-
 add_library(fs_static STATIC)
 
 set_target_properties(
@@ -150,14 +148,6 @@ target_link_libraries(
   PRIVATE
     path_static
 )
-
-if(WIN32)
-  target_link_libraries(
-    fs_static
-    PUBLIC
-      ntdll
-  )
-endif()
 
 install(TARGETS fs_shared fs_static)
 
